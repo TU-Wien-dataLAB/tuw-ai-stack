@@ -5,6 +5,7 @@ apis:
 - batches
 - files
 - inference
+- safety
 - tool_runtime
 - vector_io
 providers:
@@ -75,6 +76,13 @@ providers:
       metadata_store:
         table_name: files_metadata
         backend: sql_default
+  safety:
+  - provider_id: llama-guard
+    provider_type: inline::llama-guard
+    config:
+      excluded_categories: []
+  - provider_id: code-scanner
+    provider_type: inline::code-scanner
   agents:
   - provider_id: meta-reference
     provider_type: inline::meta-reference
