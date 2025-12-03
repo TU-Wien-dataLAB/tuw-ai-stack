@@ -11,6 +11,13 @@ vllm:
 milvus: {}
   # Inline Milvus uses embedded storage, no connection settings required
 
+# Vector store configuration
+vectorStore:
+  defaultProvider: "faiss"
+  embedding:
+    provider: "sentence-transformers"
+    model: "nomic-ai/nomic-embed-text-v1.5"
+
 # Telemetry configuration
 telemetry:
   enabled: false

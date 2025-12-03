@@ -101,6 +101,16 @@ spec:
               value: "/home/lls/.llama/distributions/starter/milvus.db"
             - name: MILVUS_URL
               value: "/home/lls/.llama/distributions/starter/milvus"
+            {{- if .Values.vectorStore }}
+            - name: VECTOR_STORE_DEFAULT_PROVIDER
+              value: {{ .Values.vectorStore.defaultProvider | quote }}
+            {{- if .Values.vectorStore.embedding }}
+            - name: VECTOR_STORE_EMBEDDING_PROVIDER
+              value: {{ .Values.vectorStore.embedding.provider | quote }}
+            - name: VECTOR_STORE_EMBEDDING_MODEL
+              value: {{ .Values.vectorStore.embedding.model | quote }}
+            {{- end }}
+            {{- end }}
           livenessProbe:
             {{- tpl (toYaml .Values.livenessProbe) $ | nindent 12 }}
           readinessProbe:
