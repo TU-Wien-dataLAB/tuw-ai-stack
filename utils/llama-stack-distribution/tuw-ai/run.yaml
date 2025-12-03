@@ -147,6 +147,8 @@ registered_resources:
     provider_id: ${env.VECTOR_STORE_EMBEDDING_PROVIDER:=sentence-transformers}
     provider_model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
     model_type: embedding
+    metadata:
+      embedding_dimension: ${env.VECTOR_STORE_EMBEDDING_DIMENSION:=768}
   shields:
   - shield_id: llama-guard
     provider_id: ${env.SAFETY_MODEL:+llama-guard}

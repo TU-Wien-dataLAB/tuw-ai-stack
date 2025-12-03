@@ -17,6 +17,7 @@ vectorStore:
   embedding:
     provider: "sentence-transformers"
     model: "nomic-ai/nomic-embed-text-v1.5"
+    dimension: 768  # Embedding dimension (nomic-embed: 768, e5-mistral-7b: 4096)
 
 # Telemetry configuration
 telemetry:

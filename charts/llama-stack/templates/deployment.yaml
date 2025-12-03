@@ -109,6 +109,8 @@ spec:
               value: {{ .Values.vectorStore.embedding.provider | quote }}
             - name: VECTOR_STORE_EMBEDDING_MODEL
               value: {{ .Values.vectorStore.embedding.model | quote }}
+            - name: VECTOR_STORE_EMBEDDING_DIMENSION
+              value: {{ .Values.vectorStore.embedding.dimension | quote }}
             {{- end }}
             {{- end }}
           livenessProbe:
