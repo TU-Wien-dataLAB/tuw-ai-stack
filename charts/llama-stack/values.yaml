@@ -34,8 +34,8 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: docker.io/llamastack/distribution-starter
-  tag: 0.3.3
+  repository: ghcr.io/tu-wien-datalab/llama-stack
+  tag: main
   # This sets the pull policy for images.
   pullPolicy: Always
 

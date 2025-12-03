@@ -70,13 +70,17 @@ spec:
             - "--port"
             - "{{ .Values.service.port }}"
           env:
-          {{- with .Values.vllm }}
+          {{- if .Values.vllm.url }}
             - name: VLLM_URL
-              value: {{ .url | quote }}
+              value: {{ .Values.vllm.url | quote }}
+            {{- if .Values.vllm.apiKey }}
             - name: VLLM_API_TOKEN
-              value: {{ .apiKey | default "" | quote}}
+              value: {{ .Values.vllm.apiKey | quote }}
+            {{- end }}
+            {{- if .Values.vllm.maxTokens }}
             - name: VLLM_MAX_TOKENS
-              value: {{ .maxTokens | default "4096" | quote }}
+              value: {{ .Values.vllm.maxTokens | quote }}
+            {{- end }}
           {{- end }}
           {{- if .Values.persistence.enabled }}
             - name: SQLITE_STORE_DIR
