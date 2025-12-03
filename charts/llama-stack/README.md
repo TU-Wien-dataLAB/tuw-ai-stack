@@ -55,27 +55,58 @@ The Llama Stack configuration is now **fully managed via Helm values** and mount
 
 ## Customizing Configuration
 
-**All configuration is done through the `runConfig` section in `values.yaml`**. This section contains the complete run.yaml that will be mounted as a ConfigMap.
+The configuration is **modular** - split into separate sections that are combined in the ConfigMap. This allows you to override only specific sections while keeping the rest at defaults.
+
+### Configuration Sections
+
+| Section | Description | Common Use Case |
+|---------|-------------|-----------------|
+| `providers` | Inference, vector IO, files, safety, agents, tools, batches | Add custom inference endpoints, change vector store backends |
+| `storage` | Backend storage configuration (sqlite, etc.) | Rarely changed |
+| `registeredResources` | Models, shields, vector DBs, datasets, tool groups | **Most commonly customized** - register embedding models |
+| `server` | Server port configuration | Rarely changed |
+| `vectorStores` | Default vector store and embedding model | Change default vector store provider |
+| `safety` | Default safety shield | Rarely changed |
+
+**Static sections** (in ConfigMap template): `version`, `image_name`, `apis`
 
 ### Example: Using vLLM Embeddings with Milvus
 
-Create a `custom-values.yaml`:
+Create a `custom-values.yaml` - **only override what you need**:
 
 ```yaml
-runConfig:
-  vector_stores:
-    default_provider_id: milvus
-    default_embedding_model:
+# Only customize registeredResources and vectorStores
+# All other sections (providers, storage, etc.) use defaults
+registeredResources:
+  models:
+    - model_id: intfloat/e5-mistral-7b-instruct
       provider_id: vllm
-      model_id: intfloat/e5-mistral-7b-instruct
-  registered_resources:
-    models:
-      - model_id: intfloat/e5-mistral-7b-instruct
-        provider_id: vllm
-        provider_model_id: intfloat/e5-mistral-7b-instruct
-        model_type: embedding
-        metadata:
-          embedding_dimension: 4096
+      provider_model_id: intfloat/e5-mistral-7b-instruct
+      model_type: embedding
+      metadata:
+        embedding_dimension: 4096
+  shields:
+    - shield_id: llama-guard
+      provider_id: ${env.SAFETY_MODEL:+llama-guard}
+      provider_shield_id: ${env.SAFETY_MODEL:=}
+    - shield_id: code-scanner
+      provider_id: ${env.CODE_SCANNER_MODEL:+code-scanner}
+      provider_shield_id: ${env.CODE_SCANNER_MODEL:=}
+  vector_dbs: []
+  datasets: []
+  scoring_fns: []
+  benchmarks: []
+  tool_groups:
+    - toolgroup_id: builtin::websearch
+      provider_id: tavily-search
+    - toolgroup_id: builtin::rag
+      provider_id: rag-runtime
+
+vectorStores:
+  default_provider_id: milvus
+  default_embedding_model:
+    provider_id: vllm
+    model_id: intfloat/e5-mistral-7b-instruct
 ```
 
 Deploy with:
@@ -84,26 +115,16 @@ Deploy with:
 helm upgrade -i llama-stack charts/llama-stack -f custom-values.yaml
 ```
 
-Or via command line:
-
-```sh
-helm upgrade -i llama-stack charts/llama-stack \
-  --set 'runConfig.vector_stores.default_provider_id=milvus' \
-  --set 'runConfig.vector_stores.default_embedding_model.provider_id=vllm' \
-  --set 'runConfig.vector_stores.default_embedding_model.model_id=intfloat/e5-mistral-7b-instruct'
-```
-
 ### What You Can Customize
 
-The entire `runConfig` section can be modified to:
+Each section can be independently modified:
 
-- Change vector store providers (faiss, milvus, sqlite-vec, chromadb, pgvector, qdrant)
-- Register embedding models with different dimensions
-- Add new inference providers
-- Configure safety shields
-- Set up tool runtimes (Brave Search, Tavily, RAG, MCP)
-- Modify storage backends
-- Configure agents and batch processing
+- **`providers`**: Add inference providers, configure vector stores, set up tools
+- **`storage`**: Modify storage backends (rarely needed)
+- **`registeredResources`**: Register models with correct types and dimensions (**most common**)
+- **`server`**: Change port (default: 8321)
+- **`vectorStores`**: Set default vector store provider and embedding model
+- **`safety`**: Configure default safety shield
 
 **Common embedding dimensions:**
 - `nomic-ai/nomic-embed-text-v1.5` (sentence-transformers): 768

@@ -6,4 +6,37 @@ metadata:
     {{- include "llama-stack.labels" . | nindent 4 }}
 data:
   run.yaml: |
-    {{- toYaml .Values.runConfig | nindent 4 }}
+    version: 2
+    image_name: tuw-ai
+    apis:
+      - agents
+      - batches
+      - files
+      - inference
+      - safety
+      - tool_runtime
+      - vector_io
+    {{- with .Values.providers }}
+    providers:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.storage }}
+    storage:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.registeredResources }}
+    registered_resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.server }}
+    server:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.vectorStores }}
+    vector_stores:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.safety }}
+    safety:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
