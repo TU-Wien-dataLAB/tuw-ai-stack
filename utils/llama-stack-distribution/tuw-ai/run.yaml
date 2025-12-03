@@ -142,7 +142,11 @@ storage:
       namespace: prompts
       backend: kv_default
 registered_resources:
-  models: []
+  models:
+  - model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
+    provider_id: ${env.VECTOR_STORE_EMBEDDING_PROVIDER:=sentence-transformers}
+    provider_model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
+    model_type: embedding
   shields:
   - shield_id: llama-guard
     provider_id: ${env.SAFETY_MODEL:+llama-guard}
