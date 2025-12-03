@@ -3,26 +3,14 @@ image_name: tuw-ai
 apis:
 - agents
 - batches
-- datasetio
 - eval
 - files
 - inference
-- post_training
 - safety
-- scoring
 - tool_runtime
 - vector_io
 providers:
   inference:
-  - provider_id: ${env.CEREBRAS_API_KEY:+cerebras}
-    provider_type: remote::cerebras
-    config:
-      base_url: https://api.cerebras.ai/v1
-      api_key: ${env.CEREBRAS_API_KEY:=}
-  - provider_id: ${env.OLLAMA_URL:+ollama}
-    provider_type: remote::ollama
-    config:
-      base_url: ${env.OLLAMA_URL:=http://localhost:11434/v1}
   - provider_id: ${env.VLLM_URL:+vllm}
     provider_type: remote::vllm
     config:
@@ -30,30 +18,6 @@ providers:
       max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
       api_token: ${env.VLLM_API_TOKEN:=fake}
       tls_verify: ${env.VLLM_TLS_VERIFY:=true}
-  - provider_id: ${env.TGI_URL:+tgi}
-    provider_type: remote::tgi
-    config:
-      base_url: ${env.TGI_URL:=}
-  - provider_id: fireworks
-    provider_type: remote::fireworks
-    config:
-      base_url: https://api.fireworks.ai/inference/v1
-      api_key: ${env.FIREWORKS_API_KEY:=}
-  - provider_id: together
-    provider_type: remote::together
-    config:
-      base_url: https://api.together.xyz/v1
-      api_key: ${env.TOGETHER_API_KEY:=}
-  - provider_id: bedrock
-    provider_type: remote::bedrock
-    config:
-      api_key: ${env.AWS_BEARER_TOKEN_BEDROCK:=}
-      region_name: ${env.AWS_DEFAULT_REGION:=us-east-2}
-  - provider_id: ${env.NVIDIA_API_KEY:+nvidia}
-    provider_type: remote::nvidia
-    config:
-      base_url: ${env.NVIDIA_BASE_URL:=https://integrate.api.nvidia.com/v1}
-      api_key: ${env.NVIDIA_API_KEY:=}
   - provider_id: openai
     provider_type: remote::openai
     config:
@@ -67,30 +31,6 @@ providers:
     provider_type: remote::gemini
     config:
       api_key: ${env.GEMINI_API_KEY:=}
-  - provider_id: ${env.VERTEX_AI_PROJECT:+vertexai}
-    provider_type: remote::vertexai
-    config:
-      project: ${env.VERTEX_AI_PROJECT:=}
-      location: ${env.VERTEX_AI_LOCATION:=us-central1}
-  - provider_id: groq
-    provider_type: remote::groq
-    config:
-      base_url: https://api.groq.com/openai/v1
-      api_key: ${env.GROQ_API_KEY:=}
-  - provider_id: sambanova
-    provider_type: remote::sambanova
-    config:
-      base_url: https://api.sambanova.ai/v1
-      api_key: ${env.SAMBANOVA_API_KEY:=}
-  - provider_id: ${env.AZURE_API_KEY:+azure}
-    provider_type: remote::azure
-    config:
-      api_key: ${env.AZURE_API_KEY:=}
-      base_url: ${env.AZURE_API_BASE:=}
-      api_version: ${env.AZURE_API_VERSION:=}
-      api_type: ${env.AZURE_API_TYPE:=}
-  - provider_id: sentence-transformers
-    provider_type: inline::sentence-transformers
   vector_io:
   - provider_id: faiss
     provider_type: inline::faiss
@@ -137,14 +77,6 @@ providers:
       persistence:
         namespace: vector_io::qdrant_remote
         backend: kv_default
-  - provider_id: ${env.WEAVIATE_CLUSTER_URL:+weaviate}
-    provider_type: remote::weaviate
-    config:
-      weaviate_api_key: null
-      weaviate_cluster_url: ${env.WEAVIATE_CLUSTER_URL:=localhost:8080}
-      persistence:
-        namespace: vector_io::weaviate
-        backend: kv_default
   files:
   - provider_id: meta-reference-files
     provider_type: inline::localfs
@@ -173,11 +105,6 @@ providers:
           backend: sql_default
           max_write_queue_size: 10000
           num_writers: 4
-  post_training:
-  - provider_id: torchtune-cpu
-    provider_type: inline::torchtune-cpu
-    config:
-      checkpoint_format: meta
   eval:
   - provider_id: meta-reference
     provider_type: inline::meta-reference
@@ -185,28 +112,6 @@ providers:
       kvstore:
         namespace: eval
         backend: kv_default
-  datasetio:
-  - provider_id: huggingface
-    provider_type: remote::huggingface
-    config:
-      kvstore:
-        namespace: datasetio::huggingface
-        backend: kv_default
-  - provider_id: localfs
-    provider_type: inline::localfs
-    config:
-      kvstore:
-        namespace: datasetio::localfs
-        backend: kv_default
-  scoring:
-  - provider_id: basic
-    provider_type: inline::basic
-  - provider_id: llm-as-judge
-    provider_type: inline::llm-as-judge
-  - provider_id: braintrust
-    provider_type: inline::braintrust
-    config:
-      openai_api_key: ${env.OPENAI_API_KEY:=}
   tool_runtime:
   - provider_id: brave-search
     provider_type: remote::brave-search
