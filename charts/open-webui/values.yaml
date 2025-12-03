@@ -1,0 +1,64 @@
+persistence:
+  subPath: ""
+  # -- If using multiple replicas, you must update accessModes to ReadWriteMany
+  accessModes:
+    - ReadWriteOnce
+  storageClass: ""
+  selector: {}
+  annotations: {}
+  size: "100Gi"
+
+open-webui:
+  enabled: true
+
+  # image:
+  #   tag: v0.5.19
+
+  extraEnvVars:
+    - name: ENABLE_ADMIN_CHAT_ACCESS
+      value: "false"
+    # https://docs.openwebui.com/tutorials/features/sso/#oidc
+    - name: ENABLE_LOGIN_FORM
+      value: "false"
+    - name: ENABLE_SIGNUP
+      value: "false"
+    - name: ENABLE_OAUTH_SIGNUP
+      value: "true"
+    - name: OAUTH_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: sso-client-secret
+          key: CLIENT_ID
+    - name: OAUTH_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: sso-client-secret
+          key: CLIENT_SECRET
+    # - name: OPENID_PROVIDER_URL
+    #   value: ...
+    # - name: OAUTH_PROVIDER_NAME
+    #   value: ...
+    - name: OAUTH_SCOPES
+      value: "openid email profile"
+
+  sso:
+    # TODO: migrate SSO env variables to sso object
+    enabled: true
+    enableGroupManagement: true
+
+  ingress:
+    enabled: false
+    # class: ...
+    # host: ...
+    # tls: true
+    # annotations: {}
+    #   nginx.ingress.kubernetes.io/proxy-body-size: 100m # fix 413 Request Entity Too Large Error for e.g. RAG
+
+  persistence:
+    existingClaim: "open-webui"
+
+  ollama:
+    enabled: false
+
+  pipelines:
+    enabled: false

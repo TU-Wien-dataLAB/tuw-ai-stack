@@ -1,0 +1,129 @@
+{{- range $server := .Values.mcpServers }}
+{{- if $server.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mcpServers.server.fullname" (dict "server" $server "ctx" $) }}
+  labels:
+    {{- include "mcpServers.server.labels" (dict "server" $server "ctx" $) | nindent 4 }}
+spec:
+  replicas: {{ $server.replicas | default 1 }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "mcpServers.server.selectorLabels" (dict "server" $server "ctx" $) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mcpServers.server.selectorLabels" (dict "server" $server "ctx" $) | nindent 8 }}
+      {{- if and $server.proxy $server.proxy.enabled }}
+      annotations:
+        checksum/proxy: {{ include "mcpServers.proxy.checksum" $ }}
+      {{- end }}
+    spec:
+      {{- if $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml $.Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if $server.nodeSelector }}
+      nodeSelector:
+        {{ toYaml $server.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $server.tolerations }}
+      tolerations:
+        {{ toYaml $server.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if $server.affinity }}
+      affinity:
+        {{ toYaml $server.affinity | nindent 8 }}
+      {{- end }}
+      {{- if $server.initContainers }}
+      initContainers:
+      {{- range $server.initContainers }}
+      - name: {{ .name }}
+        {{- if .image }}
+        image: {{ .image }}
+        {{- else }}
+        image: {{ include "mcpServers.image" (dict "server" $server "ctx" $) }}
+        {{- end }}
+        {{- if .command }}
+        command: {{ toYaml .command | nindent 8 }}
+        {{- end }}
+        {{- if $server.env }}
+        {{- include "mcpServers.env.vars" (dict "server" $server "ctx" $) | nindent 6 }}
+        {{- end }}
+        {{- if or $server.volumeMounts (and $server.proxy $server.proxy.enabled) }}
+        volumeMounts:
+        {{- if $server.volumeMounts }}
+          {{- range $server.volumeMounts }}
+          {{ toYaml . | nindent 8 }}
+          {{- end }}
+        {{- end }}
+        {{- if and $server.proxy $server.proxy.enabled }}
+        - name: proxy-script
+          mountPath: /app
+          readOnly: true
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ $server.name }}
+        {{- if and $server.proxy $server.proxy.enabled }}
+        image: {{ include "mcpServers.proxy.image" (dict "ctx" $) }}
+        {{- else }}
+        image: {{ include "mcpServers.image" (dict "server" $server "ctx" $) }}
+        {{- end }}
+        imagePullPolicy: {{ include "mcpServers.imagePullPolicy" (dict "server" $server "ctx" $) }}
+        command:
+        {{- if and $server.proxy $server.proxy.enabled }}
+        - uvx
+        - --with
+        - fastmcp
+        - --from
+        - fastmcp
+        - python
+        - /app/proxy.py
+        - --backend-command
+        - {{ $server.command | join " " | quote }}
+        - --server-name
+        - {{ $server.name | title | replace "-" "" }}
+        - --port
+        - {{ if and $server.service $server.service.targetPort }}{{ $server.service.targetPort | quote }}{{ else }}"3000"{{ end }}
+        {{- else }}
+        {{ toYaml $server.command | nindent 8 }}
+        {{- end }}
+        {{- if $server.ports }}
+        ports:
+        {{ toYaml $server.ports | nindent 8 }}
+        {{- end }}
+        {{- if $server.env }}
+        {{- include "mcpServers.env.vars" (dict "server" $server "ctx" $) | nindent 8 }}
+        {{- end }}
+        volumeMounts:
+        {{- if $server.volumeMounts }}
+        {{- toYaml $server.volumeMounts | nindent 8 }}
+        {{- end }}
+        {{- if and $server.proxy $server.proxy.enabled }}
+        - name: proxy-script
+          mountPath: /app
+          readOnly: true
+        {{- end }}
+        {{- if $server.resources }}
+        resources:
+          {{ toYaml $server.resources | nindent 10 }}
+        {{- end }}
+      volumes:
+        {{- if $server.volumes }}
+        {{- toYaml $server.volumes | nindent 6 }}
+        {{- end }}
+        {{- if and $server.proxy $server.proxy.enabled }}
+        - name: proxy-script
+          configMap:
+            name: mcp-proxy-script
+            defaultMode: 0755
+        {{- end }}
+{{- end }}
+{{- end }}

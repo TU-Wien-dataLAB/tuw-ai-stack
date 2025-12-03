@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: crictl-prune
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: crictl-prune
+  template:
+    metadata:
+      labels:
+        name: crictl-prune
+    spec:
+      hostPID: true
+      containers:
+        - name: prune
+          image: busybox
+          command: ["/bin/sh", "-c", "chroot /host crictl rmi --prune"]
+          volumeMounts:
+            - name: host
+              mountPath: /host
+      volumes:
+        - name: host
+          hostPath:
+            path: /
+      restartPolicy: OnFailure

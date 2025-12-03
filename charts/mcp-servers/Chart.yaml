@@ -1,0 +1,12 @@
+apiVersion: v2
+name: mcp-servers
+version: 0.3.0
+description: A Helm chart for deploying MCP (Model Context Protocol) servers with transport bridging support
+type: application
+keywords:
+  - mcp
+  - model-context-protocol
+  - ai
+  - servers
+  - fastmcp
+  - proxy

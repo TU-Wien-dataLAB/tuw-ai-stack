@@ -1,0 +1,60 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Docker artifacts
+.dockerignore
+*Dockerfile
+*_dockerfile
+
+# Development files
+README.md
+LICENSE
+*.md
+docs/
+
+# Dependencies and caches
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Environment files
+.env*
+*.env
+
+# Local configuration
+local_*
+config/local_*

@@ -1,0 +1,93 @@
+# https://scottaubrey.info/blog/2024-03-05-grafana-oauth2-proxy/
+oauth2proxy:
+  config: {}
+    # existingSecret: ...
+  sessionStorage:
+    type: cookie
+  extraArgs:
+    - --pass-user-headers
+  extraEnv: []
+    # - name: OAUTH2_PROXY_PROVIDER_DISPLAY_NAME
+    #   value: ...
+    # - name: OAUTH2_PROXY_PROVIDER
+    #   value: ...
+    # - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+    #   value: ...
+    # - name: OAUTH2_PROXY_EMAIL_DOMAINS
+    #   value: "*"
+    # - name: OAUTH2_PROXY_REDIRECT_URL
+    #   value: ...
+  ingress:
+    enabled: false
+    # className: ...
+    # path: /oauth2
+    # pathType: Prefix
+    # annotations: {}
+    # hosts: []
+    # tls: []
+
+kube-prometheus-stack:
+  alertmanager:
+    enabled: true
+
+  grafana:
+    additionalDataSources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki-gateway.loki.svc.cluster.local
+        isDefault: false
+
+    defaultDashboardsEnabled: true
+    grafana.ini:
+      security:
+        allow_embedding: true
+      auth.anonymous:
+        enabled: true
+        org_role: Viewer # Editor
+
+    admin:
+      existingSecret: "grafana-admin-password"
+      userKey: ADMIN_USER
+      passwordKey: ADMIN_PASSWORD
+
+    sidecar:
+      dashboards:
+        annotations:
+          grafana_folder: "Kubernetes"
+        folderAnnotation: "grafana_folder"
+        label: grafana_dashboard
+        labelValue: "1"
+        provider:
+          foldersFromFilesStructure: true
+          allowUiUpdates: true
+
+    ingress:
+      enabled: false
+      # ingressClassName: ...
+      # hosts: []
+      # annotations: {}
+      #   # oauth2-proxy
+      #   nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+      #   nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+      # tls: []
+
+  prometheus:
+    prometheusSpec:
+      additionalScrapeConfigs:
+        - job_name: gpu-metrics
+          scrape_interval: 1s
+          metrics_path: /metrics
+          scheme: http
+          kubernetes_sd_configs:
+            - role: endpoints
+              namespaces:
+                names:
+                  - gpu-operator
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_endpoints_name]
+              action: drop
+              regex: .*-node-feature-discovery-master
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              action: replace
+              target_label: kubernetes_node

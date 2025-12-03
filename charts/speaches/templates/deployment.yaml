@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.product: NVIDIA-A40
+      containers:
+      - name: speaches
+        image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+        ports:
+        - containerPort: {{ .Values.deployment.ports.containerPort }}
+        resources:
+          limits:
+            nvidia.com/gpu: {{ index .Values "deployment" "resources" "limits" "nvidia.com/gpu" }}
+        {{- if .Values.deployment.extraEnv }}
+        env: {{ toYaml .Values.deployment.extraEnv | nindent 8 }}
+        {{- end }}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -ce
+                - |
+                  sleep 5
+                  {{- range .Values.deployment.models }}
+                  curl --fail "http://localhost:8000/v1/models/{{ . }}" -X POST
+                  {{- end }}
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Exists"
+        effect: "NoSchedule"

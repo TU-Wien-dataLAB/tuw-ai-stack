@@ -1,0 +1,12 @@
+# Default unified runtime image supporting both Python 3.12 and Node.js 25
+defaultImage:
+  repository: nikolaik/python-nodejs
+  tag: "python3.12-nodejs25-slim"
+  pullPolicy: IfNotPresent
+
+# Global settings
+global:
+  imagePullSecrets: []
+
+# List of MCP servers to deploy
+mcpServers: {}

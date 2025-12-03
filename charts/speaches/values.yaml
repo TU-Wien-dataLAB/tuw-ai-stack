@@ -1,0 +1,23 @@
+deployment:
+  replicas: 1
+  image:
+    repository: ghcr.io/speaches-ai/speaches
+    tag: 0.8.3-cuda-12.6.3
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  ports:
+    containerPort: 8000
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: "nvidia.com/gpu.product"
+            operator: "In"
+            values: ["NVIDIA-A40"]
+  extraEnv: []
+  models: []
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000

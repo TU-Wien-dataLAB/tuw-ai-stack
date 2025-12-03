@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llama-stack.fullname" . }}
+  labels:
+    {{- include "llama-stack.labels" . | nindent 4 }}
+  annotations: {}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "llama-stack.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "llama-stack.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "llama-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.persistence.enabled }}
+      initContainers:
+        - name: setup-permissions
+          image: busybox:1.36
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Setting up Llama Stack data directory..."
+              BASE_DIR="{{ .Values.persistence.mountPath }}"
+              # Clean up any existing Milvus lock files
+              rm -f $BASE_DIR/distributions/starter/milvus.db/milvus.db.lock
+              rm -f $BASE_DIR/distributions/starter/milvus.db/*.lock
+              # Create directory structure
+              mkdir -p $BASE_DIR/distributions/starter/files
+              mkdir -p $BASE_DIR/distributions/starter/milvus.db
+              chown -R 1000:1000 $BASE_DIR || echo "Some files couldn't be chowned (expected)"
+              echo "Directory structure created successfully"
+          volumeMounts:
+            - name: data-volume
+              mountPath: {{ .Values.persistence.mountPath | quote }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ (tpl .Values.image.repository $) }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          args:
+            - "--port"
+            - "{{ .Values.service.port }}"
+          env:
+          {{- with .Values.vllm }}
+            - name: VLLM_URL
+              value: {{ .url | quote }}
+            - name: VLLM_API_TOKEN
+              value: {{ .apiKey | default "" | quote}}
+            - name: VLLM_MAX_TOKENS
+              value: {{ .maxTokens | default "4096" | quote }}
+          {{- end }}
+          {{- if .Values.persistence.enabled }}
+            - name: SQLITE_STORE_DIR
+              value: "/home/lls/.llama/distributions/starter"
+            - name: HOME
+              value: "/home/lls"
+          {{- end }}
+            - name: LLAMA_STACK_PORT
+              value: {{ .Values.service.port | quote }}
+            {{- if .Values.telemetry.enabled }}
+              - name: TELEMETRY_SINKS
+                value: {{ .Values.telemetry.sinks | quote }}
+              - name: OTEL_SERVICE_NAME
+                value: {{ .Values.telemetry.serviceName | quote }}
+            {{- end }}
+            # Custom environment variables for vector store
+            - name: MILVUS_DB_PATH
+              value: "/home/lls/.llama/distributions/starter/milvus.db"
+            - name: MILVUS_URL
+              value: "/home/lls/.llama/distributions/starter/milvus"
+          livenessProbe:
+            {{- tpl (toYaml .Values.livenessProbe) $ | nindent 12 }}
+          readinessProbe:
+            {{- tpl (toYaml .Values.readinessProbe) $ | nindent 12 }}
+          startupProbe:
+            {{- tpl (toYaml .Values.startupProbe) $ | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data-volume
+              mountPath: {{ .Values.persistence.mountPath | quote }}
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: {{ include "llama-stack.fullname" . }}
+        {{- end }}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

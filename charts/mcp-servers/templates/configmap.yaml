@@ -1,0 +1,35 @@
+{{- range $server := .Values.mcpServers }}
+{{- if and $server.enabled $server.configData }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mcpServers.configmap.name" (dict "server" $server "ctx" $) }}
+  labels:
+    {{- include "mcpServers.server.labels" (dict "server" $server "ctx" $) | nindent 4 }}
+data:
+  {{ toYaml $server.configData | indent 2 }}
+{{- end }}
+{{- end }}
+
+{{- $proxyEnabled := false }}
+{{- range $server := .Values.mcpServers }}
+{{- if and $server.enabled $server.proxy $server.proxy.enabled }}
+{{- $proxyEnabled = true }}
+{{- end }}
+{{- end }}
+
+{{- if $proxyEnabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-proxy-script
+  labels:
+    app.kubernetes.io/name: {{ include "mcpServers.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  proxy.py: |
+{{ .Files.Get "files/proxy.py" | indent 4 }}
+{{- end }}
