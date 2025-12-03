@@ -17,7 +17,6 @@ providers:
       max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
       api_token: ${env.VLLM_API_TOKEN:=fake}
       tls_verify: ${env.VLLM_TLS_VERIFY:=true}
-      allowed_models: []
   - provider_id: openai
     provider_type: remote::openai
     config:

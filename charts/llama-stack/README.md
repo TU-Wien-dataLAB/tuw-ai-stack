@@ -132,15 +132,16 @@ Each section can be independently modified:
 - `text-embedding-3-small` (openai): 1536
 - `text-embedding-3-large` (openai): 3072
 
-### Important: vLLM Auto-Registration
+### Important: vLLM Model Registration
 
-The vLLM provider config includes `allowed_models: []` to **prevent automatic model registration**. This is crucial because:
+The vLLM provider **auto-discovers models** from the endpoint. However, embedding models need to be **manually registered** with the correct type:
 
-1. vLLM auto-discovers all models at the endpoint
-2. Embedding models would be incorrectly registered as text completion models
-3. This causes conflicts when you try to register them correctly as embedding models
+**How it works:**
+1. vLLM auto-discovers and registers LLM models for inference
+2. You manually register embedding models in `registeredResources.models` with `model_type: embedding`
+3. If conflicts occur (model already registered with wrong type), **delete the PVC** to clear the registry state
 
-**Solution**: Models are manually registered in `registered_resources.models` with the correct `model_type: embedding`. The empty `allowed_models` list prevents vLLM from auto-registering them.
+**Note:** The original `allowed_models: []` approach prevented models from being used. The correct solution is to clear persisted state when switching configurations.
 
 See `values.yaml` for the complete default configuration structure.
 

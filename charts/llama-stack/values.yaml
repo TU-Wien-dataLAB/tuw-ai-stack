@@ -157,7 +157,7 @@ providers:
         max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
         api_token: ${env.VLLM_API_TOKEN:=fake}
         tls_verify: ${env.VLLM_TLS_VERIFY:=true}
-        allowed_models: []  # Prevent auto-registration to avoid conflicts
+        # Don't set allowed_models - let it discover all models from endpoint
     - provider_id: openai
       provider_type: remote::openai
       config:
