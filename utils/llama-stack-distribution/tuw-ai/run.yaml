@@ -3,6 +3,7 @@ image_name: tuw-ai
 apis:
 - agents
 - batches
+- datasetio
 - eval
 - files
 - inference
@@ -111,6 +112,19 @@ providers:
     config:
       kvstore:
         namespace: eval
+        backend: kv_default
+  datasetio:
+  - provider_id: huggingface
+    provider_type: remote::huggingface
+    config:
+      kvstore:
+        namespace: datasetio::huggingface
+        backend: kv_default
+  - provider_id: localfs
+    provider_type: inline::localfs
+    config:
+      kvstore:
+        namespace: datasetio::localfs
         backend: kv_default
   tool_runtime:
   - provider_id: brave-search
