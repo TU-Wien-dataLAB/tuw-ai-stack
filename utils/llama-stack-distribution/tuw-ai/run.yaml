@@ -3,10 +3,8 @@ image_name: tuw-ai
 apis:
 - agents
 - batches
-- eval
 - files
 - inference
-- safety
 - tool_runtime
 - vector_io
 providers:
@@ -23,14 +21,6 @@ providers:
     config:
       api_key: ${env.OPENAI_API_KEY:=}
       base_url: ${env.OPENAI_BASE_URL:=https://api.openai.com/v1}
-  - provider_id: anthropic
-    provider_type: remote::anthropic
-    config:
-      api_key: ${env.ANTHROPIC_API_KEY:=}
-  - provider_id: gemini
-    provider_type: remote::gemini
-    config:
-      api_key: ${env.GEMINI_API_KEY:=}
   vector_io:
   - provider_id: faiss
     provider_type: inline::faiss
@@ -85,13 +75,6 @@ providers:
       metadata_store:
         table_name: files_metadata
         backend: sql_default
-  safety:
-  - provider_id: llama-guard
-    provider_type: inline::llama-guard
-    config:
-      excluded_categories: []
-  - provider_id: code-scanner
-    provider_type: inline::code-scanner
   agents:
   - provider_id: meta-reference
     provider_type: inline::meta-reference
@@ -105,13 +88,6 @@ providers:
           backend: sql_default
           max_write_queue_size: 10000
           num_writers: 4
-  eval:
-  - provider_id: meta-reference
-    provider_type: inline::meta-reference
-    config:
-      kvstore:
-        namespace: eval
-        backend: kv_default
   tool_runtime:
   - provider_id: brave-search
     provider_type: remote::brave-search
