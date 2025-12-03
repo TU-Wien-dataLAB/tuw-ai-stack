@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "llama-stack.fullname" . }}-config
+  labels:
+    {{- include "llama-stack.labels" . | nindent 4 }}
+data:
+  run.yaml: |
+    {{- toYaml .Values.runConfig | nindent 4 }}

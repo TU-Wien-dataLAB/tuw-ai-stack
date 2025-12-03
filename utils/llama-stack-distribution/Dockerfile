@@ -107,7 +107,7 @@ RUN set -eux; \
         if [ -n "$PYPI_VERSION" ]; then \
             uv pip install --no-cache "llama-stack==$PYPI_VERSION"; \
         else \
-            uv pip install --no-cache llama-stack; \
+            uv pip install --no-cache "llama-stack==0.3.3"; \
         fi; \
     fi;
 

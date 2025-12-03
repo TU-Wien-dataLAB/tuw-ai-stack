@@ -1,40 +1,127 @@
 # Llama Stack Helm Chart
 
-This Helm chart is designed to install the Llama Stack, a comprehensive platform for llama-related tasks.
+This Helm chart is designed to install the Llama Stack with the TUW AI distribution, a comprehensive platform for LLM tasks.
 
 The chart provides a convenient way to deploy and manage the Llama Stack on Kubernetes or OpenShift clusters. It offers flexibility in customizing the deployment by allowing users to modify values such as image repositories, probe configurations, resource limits, and more.
 
-Optionally, the chart also supports the installation of the llama-stack-playground, which provides a web-based interface for interacting with the Llama Stack.
-
 ## Quick Start
 
-Create a `local-values.yaml` file with the following:
+The default configuration uses:
+- Vector store: `faiss` (in-memory)
+- Embedding model: `sentence-transformers/nomic-ai/nomic-embed-text-v1.5` (768 dimensions)
 
-> **Note**
-> Chart currently only supports `vllm` framework directly. But other distributions can managed by adding to the `env` inside the values file directly.
-
-```yaml
-
-distribution: distribution-remote-vllm
-
-vllm:
-  url: "https://<MY_VLLM_INSTANCE>:443/v1"
-  inferenceModel: "meta-llama/Llama-3.1-8B-Instruct"
-  apiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-Login to Kubernetes through the CLI and run:
+To deploy with defaults:
 
 ```sh
-helm upgrade -i llama-stack . -f local-values.yaml
+helm upgrade -i llama-stack charts/llama-stack
 ```
 
 > [!TIP]
-> Can be installed on [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download) to for local validation.
+> Can be installed on [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download) for local validation.
 
-## Custom Configuration
+## Configuration Architecture
 
-By default llama-stack will use the run.yaml config that comes with the specified distribution. For more granular control the `customRunConfig` can be set to true, in which case the helm chart will use the values inside of the `files/run.yaml` instead.
+The Llama Stack configuration is now **fully managed via Helm values** and mounted as a ConfigMap. This approach is more robust than relying on the Python package location which can change between versions.
+
+```
+┌─────────────────────────────────────┐
+│         Helm Values                 │
+│      (values.yaml)                  │
+│   runConfig (complete run.yaml)     │
+└──────────────┬──────────────────────┘
+               │
+               ▼ toYaml
+┌─────────────────────────────────────┐
+│       ConfigMap                     │
+│  /etc/llama-stack/run.yaml          │
+│  (All configuration in one place)   │
+└──────────────┬──────────────────────┘
+               │
+               ▼ mounted as volume
+┌─────────────────────────────────────┐
+│     Llama Stack Container           │
+│  RUN_CONFIG_PATH=/etc/llama-stack/  │
+│                run.yaml             │
+│  llama-stack version: 0.3.3         │
+└─────────────────────────────────────┘
+```
+
+**Benefits:**
+- ✅ Avoids Python version dependencies
+- ✅ Makes configuration fully declarative via Helm
+- ✅ Allows runtime configuration changes via Helm upgrades
+- ✅ No need to rebuild Docker image for config changes
+- ✅ Version pinned to llama-stack 0.3.3 for stability
+
+## Customizing Configuration
+
+**All configuration is done through the `runConfig` section in `values.yaml`**. This section contains the complete run.yaml that will be mounted as a ConfigMap.
+
+### Example: Using vLLM Embeddings with Milvus
+
+Create a `custom-values.yaml`:
+
+```yaml
+runConfig:
+  vector_stores:
+    default_provider_id: milvus
+    default_embedding_model:
+      provider_id: vllm
+      model_id: intfloat/e5-mistral-7b-instruct
+  registered_resources:
+    models:
+      - model_id: intfloat/e5-mistral-7b-instruct
+        provider_id: vllm
+        provider_model_id: intfloat/e5-mistral-7b-instruct
+        model_type: embedding
+        metadata:
+          embedding_dimension: 4096
+```
+
+Deploy with:
+
+```sh
+helm upgrade -i llama-stack charts/llama-stack -f custom-values.yaml
+```
+
+Or via command line:
+
+```sh
+helm upgrade -i llama-stack charts/llama-stack \
+  --set 'runConfig.vector_stores.default_provider_id=milvus' \
+  --set 'runConfig.vector_stores.default_embedding_model.provider_id=vllm' \
+  --set 'runConfig.vector_stores.default_embedding_model.model_id=intfloat/e5-mistral-7b-instruct'
+```
+
+### What You Can Customize
+
+The entire `runConfig` section can be modified to:
+
+- Change vector store providers (faiss, milvus, sqlite-vec, chromadb, pgvector, qdrant)
+- Register embedding models with different dimensions
+- Add new inference providers
+- Configure safety shields
+- Set up tool runtimes (Brave Search, Tavily, RAG, MCP)
+- Modify storage backends
+- Configure agents and batch processing
+
+**Common embedding dimensions:**
+- `nomic-ai/nomic-embed-text-v1.5` (sentence-transformers): 768
+- `intfloat/e5-mistral-7b-instruct` (vllm): 4096
+- `text-embedding-3-small` (openai): 1536
+- `text-embedding-3-large` (openai): 3072
+
+### Important: vLLM Auto-Registration
+
+The vLLM provider config includes `allowed_models: []` to **prevent automatic model registration**. This is crucial because:
+
+1. vLLM auto-discovers all models at the endpoint
+2. Embedding models would be incorrectly registered as text completion models
+3. This causes conflicts when you try to register them correctly as embedding models
+
+**Solution**: Models are manually registered in `registered_resources.models` with the correct `model_type: embedding`. The empty `allowed_models` list prevents vLLM from auto-registering them.
+
+See `values.yaml` for the complete default configuration structure.
 
 ## Values
 

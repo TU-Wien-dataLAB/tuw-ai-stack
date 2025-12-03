@@ -70,6 +70,8 @@ spec:
             - "--port"
             - "{{ .Values.service.port }}"
           env:
+            - name: RUN_CONFIG_PATH
+              value: "/etc/llama-stack/run.yaml"
           {{- if .Values.vllm.url }}
             - name: VLLM_URL
               value: {{ .Values.vllm.url | quote }}
@@ -96,23 +98,11 @@ spec:
               - name: OTEL_SERVICE_NAME
                 value: {{ .Values.telemetry.serviceName | quote }}
             {{- end }}
-            # Custom environment variables for vector store
+            # Custom environment variables
             - name: MILVUS_DB_PATH
               value: "/home/lls/.llama/distributions/starter/milvus.db"
             - name: MILVUS_URL
               value: "/home/lls/.llama/distributions/starter/milvus"
-            {{- if .Values.vectorStore }}
-            - name: VECTOR_STORE_DEFAULT_PROVIDER
-              value: {{ .Values.vectorStore.defaultProvider | quote }}
-            {{- if .Values.vectorStore.embedding }}
-            - name: VECTOR_STORE_EMBEDDING_PROVIDER
-              value: {{ .Values.vectorStore.embedding.provider | quote }}
-            - name: VECTOR_STORE_EMBEDDING_MODEL
-              value: {{ .Values.vectorStore.embedding.model | quote }}
-            - name: VECTOR_STORE_EMBEDDING_DIMENSION
-              value: {{ .Values.vectorStore.embedding.dimension | quote }}
-            {{- end }}
-            {{- end }}
           livenessProbe:
             {{- tpl (toYaml .Values.livenessProbe) $ | nindent 12 }}
           readinessProbe:
@@ -122,6 +112,9 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: config-volume
+              mountPath: /etc/llama-stack
+              readOnly: true
             {{- if .Values.persistence.enabled }}
             - name: data-volume
               mountPath: {{ .Values.persistence.mountPath | quote }}
@@ -130,6 +123,9 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
       volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "llama-stack.fullname" . }}-config
         {{- if .Values.persistence.enabled }}
         - name: data-volume
           persistentVolumeClaim:

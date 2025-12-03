@@ -17,6 +17,7 @@ providers:
       max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
       api_token: ${env.VLLM_API_TOKEN:=fake}
       tls_verify: ${env.VLLM_TLS_VERIFY:=true}
+      allowed_models: []
   - provider_id: openai
     provider_type: remote::openai
     config:
@@ -143,12 +144,12 @@ storage:
       backend: kv_default
 registered_resources:
   models:
-  - model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
-    provider_id: ${env.VECTOR_STORE_EMBEDDING_PROVIDER:=sentence-transformers}
-    provider_model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
+  - model_id: nomic-ai/nomic-embed-text-v1.5
+    provider_id: sentence-transformers
+    provider_model_id: nomic-ai/nomic-embed-text-v1.5
     model_type: embedding
     metadata:
-      embedding_dimension: ${env.VECTOR_STORE_EMBEDDING_DIMENSION:=768}
+      embedding_dimension: 768
   shields:
   - shield_id: llama-guard
     provider_id: ${env.SAFETY_MODEL:+llama-guard}
@@ -168,9 +169,9 @@ registered_resources:
 server:
   port: 8321
 vector_stores:
-  default_provider_id: ${env.VECTOR_STORE_DEFAULT_PROVIDER:=faiss}
+  default_provider_id: faiss
   default_embedding_model:
-    provider_id: ${env.VECTOR_STORE_EMBEDDING_PROVIDER:=sentence-transformers}
-    model_id: ${env.VECTOR_STORE_EMBEDDING_MODEL:=nomic-ai/nomic-embed-text-v1.5}
+    provider_id: sentence-transformers
+    model_id: nomic-ai/nomic-embed-text-v1.5
 safety:
   default_shield_id: llama-guard
