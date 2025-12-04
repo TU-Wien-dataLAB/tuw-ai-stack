@@ -4,6 +4,7 @@
 
 What is being deployed?
 - **aqueduct** - AI gateway (helm chart can be found at [https://github.com/TU-Wien-dataLAB/aqueduct/tree/main/charts/aqueduct](https://github.com/TU-Wien-dataLAB/aqueduct/tree/main/charts/aqueduct))
+- **vllm-production-stack** - inference engine with model router (helm chart found at [https://github.com/vllm-project/production-stack](https://github.com/vllm-project/production-stack))
 - **cert-issuer** - certificate issuer for TLS certificates
 - **kube-prometheus-stack** - monitoring and observability stack with Prometheus, Grafana, and AlertManager
 - **llama-stack** - unified OpenAI-compatible API layer
@@ -17,7 +18,7 @@ Cluster Dependencies:
 - External Secrets Operator
 - Ingress Controller (ingress-nginx)
 - cert-manager
-- CSI Storage Driver
+- CSI Storage Driver with dynamic provisioning
 - Default StorageClass
 - Vault (or other secret backend for External Secrets)
 - OIDC Provider (for SSO integrations)
