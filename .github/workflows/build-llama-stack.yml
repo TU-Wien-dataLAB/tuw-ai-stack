@@ -2,12 +2,6 @@ name: Build and Push Llama Stack Docker Image
 
 on:
   workflow_dispatch:
-    inputs:
-      distro_name:
-        description: 'Distribution name (e.g., tuw-ai)'
-        required: false
-        default: 'tuw-ai'
-        type: string
   push:
     branches:
       - main
@@ -61,7 +55,8 @@ jobs:
           context: utils/llama-stack-distribution
           file: utils/llama-stack-distribution/Dockerfile
           build-args: |
-            DISTRO_NAME=${{ inputs.distro_name || 'tuw-ai' }}
+            DISTRO_NAME=tuw-ai
+            PYPI_VERSION=${{vars.LLAMA_STACK_PYPI_VERSION || '0.3.3' }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

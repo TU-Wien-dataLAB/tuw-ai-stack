@@ -145,20 +145,48 @@ The vLLM provider **auto-discovers models** from the endpoint. However, embeddin
 
 See `values.yaml` for the complete default configuration structure.
 
+## Network Policy
+
+The chart includes a NetworkPolicy that restricts internal Kubernetes traffic while allowing all egress to the internet. This is useful for security purposes to limit lateral movement within the cluster.
+
+### Configuration
+
+Enable the network policy and configure allowed namespaces in `values.yaml`:
+
+```yaml
+networkPolicy:
+  enabled: true
+  allowedNamespaces:
+    - open-webui
+    - vllm
+```
+
+### How It Works
+
+When enabled, the NetworkPolicy:
+- **Allows** all egress traffic to the internet (excluding private IP ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+- **Allows** DNS resolution to kube-system namespace
+- **Allows** egress to namespaces specified in `allowedNamespaces`
+- **Blocks** all other internal Kubernetes traffic
+
+This ensures that llama-stack can only communicate with explicitly allowed services while maintaining full internet access.
+
 ## Values
 
 ### Llama Stack Specific
 
-| Key                     | Type     | Default                                                                    | Description                                                                                                                           |
-| :---------------------- | :------- | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `customRunConfig`       | `bool`   | `false`                                                                    | Indicates whether a custom run configuration is being used.                                                                           |
-| `distribution`          | `string` | `"distribution-remote-vllm"`                                               | Specifies the distribution or type of deployment being used (in this case, related to a remote vLLM distribution).                    |
-| `telemetry.enabled`     | `bool`   | `false`                                                                    | Enables or disables telemetry collection.                                                                                             |
-| `telemetry.serviceName` | `string` | `"otel-collector.openshift-opentelemetry-operator.svc.cluster.local:4318"` | The service name and address of the telemetry collector.                                                                              |
-| `telemetry.sinks`       | `string` | `"console,sqlite,otel"`                                                    | Specifies the destinations or sinks where telemetry data will be sent.                                                                |
-| `vllm.inferenceModel`   | `string` | `"llama2-7b-chat"`                                                         | The specific inference model to be used by vLLM (a high-throughput and memory-efficient inference service for large language models). |
-| `vllm.url`              | `string` | `"http://vllm-server"`                                                     | The URL of the vLLM service.                                                                                                          |
-| `env`                   | `object` | N/A                                                                        | A set of key/value pairs that can be set in the pod                                                                                   |
+| Key                           | Type     | Default                                                                    | Description                                                                                                                           |
+| :---------------------------- | :------- | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `customRunConfig`             | `bool`   | `false`                                                                    | Indicates whether a custom run configuration is being used.                                                                           |
+| `distribution`                | `string` | `"distribution-remote-vllm"`                                               | Specifies the distribution or type of deployment being used (in this case, related to a remote vLLM distribution).                    |
+| `networkPolicy.enabled`       | `bool`   | `true`                                                                     | Enables or disables the NetworkPolicy that restricts internal Kubernetes traffic.                                                     |
+| `networkPolicy.allowedNamespaces` | `list` | `[]`                                                                       | List of namespace names that llama-stack is allowed to communicate with internally.                                                   |
+| `telemetry.enabled`           | `bool`   | `false`                                                                    | Enables or disables telemetry collection.                                                                                             |
+| `telemetry.serviceName`       | `string` | `"otel-collector.openshift-opentelemetry-operator.svc.cluster.local:4318"` | The service name and address of the telemetry collector.                                                                              |
+| `telemetry.sinks`             | `string` | `"console,sqlite,otel"`                                                    | Specifies the destinations or sinks where telemetry data will be sent.                                                                |
+| `vllm.inferenceModel`         | `string` | `"llama2-7b-chat"`                                                         | The specific inference model to be used by vLLM (a high-throughput and memory-efficient inference service for large language models). |
+| `vllm.url`                    | `string` | `"http://vllm-server"`                                                     | The URL of the vLLM service.                                                                                                          |
+| `env`                         | `object` | N/A                                                                        | A set of key/value pairs that can be set in the pod                                                                                   |
 
 ### General
 

@@ -63,6 +63,15 @@ podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
 
+# Network policy configuration
+networkPolicy:
+  enabled: true
+  # List of namespaces to allow communication with
+  allowedNamespaces: []
+  # Example:
+  # - open-webui
+  # - vllm
+
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types

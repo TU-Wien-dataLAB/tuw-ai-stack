@@ -13,6 +13,7 @@ FROM ${BASE_IMAGE}
 ARG INSTALL_MODE="pypi"
 ARG LLAMA_STACK_DIR="/workspace"
 ARG LLAMA_STACK_CLIENT_DIR=""
+# LLAMA_STACK_PYPI_VERSION from https://github.com/TU-Wien-dataLAB/tuw-ai-stack/settings/variables/actions
 ARG PYPI_VERSION=""
 ARG TEST_PYPI_VERSION=""
 ARG KEEP_WORKSPACE=""
@@ -107,7 +108,7 @@ RUN set -eux; \
         if [ -n "$PYPI_VERSION" ]; then \
             uv pip install --no-cache "llama-stack==$PYPI_VERSION"; \
         else \
-            uv pip install --no-cache "llama-stack==0.3.3"; \
+            uv pip install --no-cache "llama-stack"; \
         fi; \
     fi;
 
