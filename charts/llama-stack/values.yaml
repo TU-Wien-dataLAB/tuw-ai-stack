@@ -17,7 +17,7 @@ securityContext: {}
 
 env:
   VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
-  MILVUS_DB_PATH: "/home/lls/.llama/distributions/starter"
+  MILVUS_DB_PATH: "/home/lls/.llama/distributions/starter/milvus.db"
   MILVUS_URL: "/home/lls/.llama/distributions/starter/milvus"
 
 replicaCount: 1
