@@ -4,6 +4,7 @@ metadata:
   name: {{ include "llama-stack.fullname" . }}
   labels:
     {{- include "llama-stack.labels" . | nindent 4 }}
+    app: {{ .Release.Name }}
   annotations: {}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -23,7 +24,17 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        app: {{ .Release.Name }}
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ .Release.Name }}
+              topologyKey: kubernetes.io/hostname
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
