@@ -1,16 +1,6 @@
 # Note: The starter distribution uses built-in configuration
 # All providers are configured via environment variables below
 
-distribution: distribution-starter
-
-# VLLM configuration
-vllm:
-  url: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
-
-# Milvus configuration (inline - no external service needed)
-milvus: {}
-  # Inline Milvus uses embedded storage, no connection settings required
-
 # Telemetry configuration
 telemetry:
   enabled: false
@@ -25,10 +15,10 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-#  Use to allow for other env variables to be passed to the container
-#  Use to allow for other env variables to be passed to the container
-# env:
-#   MY_CUSTOM_ENV_VAR: "my-custom-env-var-value"
+env:
+  VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
+  MILVUS_DB_PATH: "/home/lls/.llama/distributions/starter/milvus.db"
+  MILVUS_URL: "/home/lls/.llama/distributions/starter/milvus"
 
 replicaCount: 1
 

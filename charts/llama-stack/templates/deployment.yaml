@@ -72,17 +72,9 @@ spec:
           env:
             - name: RUN_CONFIG_PATH
               value: "/etc/llama-stack/config.yaml"
-          {{- if .Values.vllm.url }}
-            - name: VLLM_URL
-              value: {{ .Values.vllm.url | quote }}
-            {{- if .Values.vllm.apiKey }}
-            - name: VLLM_API_TOKEN
-              value: {{ .Values.vllm.apiKey | quote }}
-            {{- end }}
-            {{- if .Values.vllm.maxTokens }}
-            - name: VLLM_MAX_TOKENS
-              value: {{ .Values.vllm.maxTokens | quote }}
-            {{- end }}
+          {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
           {{- end }}
           {{- if .Values.persistence.enabled }}
             - name: SQLITE_STORE_DIR
@@ -92,17 +84,12 @@ spec:
           {{- end }}
             - name: LLAMA_STACK_PORT
               value: {{ .Values.service.port | quote }}
-            {{- if .Values.telemetry.enabled }}
-              - name: TELEMETRY_SINKS
-                value: {{ .Values.telemetry.sinks | quote }}
-              - name: OTEL_SERVICE_NAME
-                value: {{ .Values.telemetry.serviceName | quote }}
-            {{- end }}
-            # Custom environment variables
-            - name: MILVUS_DB_PATH
-              value: "/home/lls/.llama/distributions/starter/milvus.db"
-            - name: MILVUS_URL
-              value: "/home/lls/.llama/distributions/starter/milvus"
+          {{- if .Values.telemetry.enabled }}
+            - name: TELEMETRY_SINKS
+              value: {{ .Values.telemetry.sinks | quote }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.telemetry.serviceName | quote }}
+          {{- end }}
           livenessProbe:
             {{- tpl (toYaml .Values.livenessProbe) $ | nindent 12 }}
           readinessProbe:
