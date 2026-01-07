@@ -17,12 +17,12 @@ securityContext: {}
 
 env:
   VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
+  VLLM_MAX_TOKENS: "8192"
   MILVUS_DB_PATH: "/home/lls/.llama/distributions/starter/milvus.db"
   MILVUS_URL: "/home/lls/.llama/distributions/starter/milvus"
 
 replicaCount: 1
 
-# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
   repository: ghcr.io/tu-wien-datalab/llama-stack
   tag: main
@@ -110,7 +110,6 @@ resources:
     cpu: 8
     memory: 16Gi
 
-# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
     path: /v1/health
