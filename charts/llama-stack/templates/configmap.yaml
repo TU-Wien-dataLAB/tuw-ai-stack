@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "llama-stack.labels" . | nindent 4 }}
 data:
-  run.yaml: |
+  config.yaml: |
     version: 2
     image_name: tuw-ai
     apis:

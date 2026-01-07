@@ -71,7 +71,7 @@ spec:
             - "{{ .Values.service.port }}"
           env:
             - name: RUN_CONFIG_PATH
-              value: "/etc/llama-stack/run.yaml"
+              value: "/etc/llama-stack/config.yaml"
           {{- if .Values.vllm.url }}
             - name: VLLM_URL
               value: {{ .Values.vllm.url | quote }}

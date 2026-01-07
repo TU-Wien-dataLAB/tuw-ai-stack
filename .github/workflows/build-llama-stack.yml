@@ -56,7 +56,7 @@ jobs:
           file: utils/llama-stack-distribution/Dockerfile
           build-args: |
             DISTRO_NAME=tuw-ai
-            PYPI_VERSION=${{vars.LLAMA_STACK_PYPI_VERSION || '0.3.3' }}
+            PYPI_VERSION=${{vars.LLAMA_STACK_PYPI_VERSION || '0.4.0' }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

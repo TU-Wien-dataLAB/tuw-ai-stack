@@ -36,7 +36,9 @@ from llama_stack.providers.remote.vector_io.pgvector.config import (
     PGVectorVectorIOConfig,
 )
 from llama_stack.providers.remote.vector_io.qdrant.config import QdrantVectorIOConfig
-from llama_stack.providers.remote.vector_io.weaviate.config import WeaviateVectorIOConfig
+from llama_stack.providers.remote.vector_io.weaviate.config import (
+    WeaviateVectorIOConfig,
+)
 from llama_stack_api import RemoteProviderSpec
 
 
@@ -84,7 +86,8 @@ def get_remote_inference_providers() -> list[Provider]:
     remote_providers = [
         provider
         for provider in available_providers()
-        if isinstance(provider, RemoteProviderSpec) and provider.adapter_type in ENABLED_INFERENCE_PROVIDERS
+        if isinstance(provider, RemoteProviderSpec)
+        and provider.adapter_type in ENABLED_INFERENCE_PROVIDERS
     ]
 
     inference_providers = []
@@ -111,7 +114,10 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
     remote_inference_providers = get_remote_inference_providers()
 
     providers = {
-        "inference": [BuildProvider(provider_type=p.provider_type, module=p.module) for p in remote_inference_providers]
+        "inference": [
+            BuildProvider(provider_type=p.provider_type, module=p.module)
+            for p in remote_inference_providers
+        ]
         + [BuildProvider(provider_type="inline::sentence-transformers")],
         "vector_io": [
             BuildProvider(provider_type="inline::faiss"),
@@ -149,7 +155,9 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             BuildProvider(provider_type="inline::reference"),
         ],
     }
-    files_config = LocalfsFilesImplConfig.sample_run_config(f"~/.llama/distributions/{name}")
+    files_config = LocalfsFilesImplConfig.sample_run_config(
+        f"~/.llama/distributions/{name}"
+    )
     files_provider = Provider(
         provider_id="meta-reference-files",
         provider_type="inline::localfs",
@@ -191,17 +199,23 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             Provider(
                 provider_id="faiss",
                 provider_type="inline::faiss",
-                config=FaissVectorIOConfig.sample_run_config(f"~/.llama/distributions/{name}"),
+                config=FaissVectorIOConfig.sample_run_config(
+                    f"~/.llama/distributions/{name}"
+                ),
             ),
             Provider(
                 provider_id="sqlite-vec",
                 provider_type="inline::sqlite-vec",
-                config=SQLiteVectorIOConfig.sample_run_config(f"~/.llama/distributions/{name}"),
+                config=SQLiteVectorIOConfig.sample_run_config(
+                    f"~/.llama/distributions/{name}"
+                ),
             ),
             Provider(
                 provider_id="${env.MILVUS_URL:+milvus}",
                 provider_type="inline::milvus",
-                config=MilvusVectorIOConfig.sample_run_config(f"~/.llama/distributions/{name}"),
+                config=MilvusVectorIOConfig.sample_run_config(
+                    f"~/.llama/distributions/{name}"
+                ),
             ),
             Provider(
                 provider_id="${env.CHROMADB_URL:+chromadb}",
@@ -275,9 +289,14 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
         container_image=None,
         template_path=None,
         providers=providers,
-        additional_pip_packages=list(set(PostgresSqlStoreConfig.pip_packages() + PostgresKVStoreConfig.pip_packages())),
+        additional_pip_packages=list(
+            set(
+                PostgresSqlStoreConfig.pip_packages()
+                + PostgresKVStoreConfig.pip_packages()
+            )
+        ),
         run_configs={
-            "run.yaml": base_run_settings,
+            "config.yaml": base_run_settings,
             "run-with-postgres-store.yaml": postgres_run_settings,
         },
         run_config_env_vars={
