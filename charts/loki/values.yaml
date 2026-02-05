@@ -12,7 +12,7 @@ loki:
             prefix: loki_index_
             period: 24h
     pattern_ingester:
-      enabled: true
+      enabled: false
     limits_config:
       allow_structured_metadata: true
       volume_enabled: true
