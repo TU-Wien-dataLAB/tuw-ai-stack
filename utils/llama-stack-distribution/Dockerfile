@@ -112,6 +112,10 @@ RUN set -eux; \
         fi; \
     fi;
 
+# Pin setuptools to <82.0.0 to keep pkg_resources for milvus-lite compatibility
+RUN unset UV_EXTRA_INDEX_URL UV_INDEX_STRATEGY && \
+    uv pip install --no-cache "setuptools<82.0.0"
+
 # Install the dependencies for the distribution
 # Explicitly unset UV index env vars to ensure we only use PyPI for distribution deps
 RUN set -eux; \

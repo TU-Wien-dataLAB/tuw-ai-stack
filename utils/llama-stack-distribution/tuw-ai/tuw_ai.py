@@ -32,6 +32,9 @@ from llama_stack.providers.inline.vector_io.sqlite_vec.config import (
 )
 from llama_stack.providers.registry.inference import available_providers
 from llama_stack.providers.remote.vector_io.chroma.config import ChromaVectorIOConfig
+from llama_stack.providers.remote.vector_io.elasticsearch.config import (
+    ElasticsearchVectorIOConfig,
+)
 from llama_stack.providers.remote.vector_io.pgvector.config import (
     PGVectorVectorIOConfig,
 )
@@ -59,7 +62,6 @@ ENABLED_INFERENCE_PROVIDERS = [
     "fireworks",
     "together",
     "gemini",
-    "vertexai",
     "groq",
     "sambanova",
     "anthropic",
@@ -76,7 +78,6 @@ INFERENCE_PROVIDER_IDS = {
     "tgi": "${env.TGI_URL:+tgi}",
     "cerebras": "${env.CEREBRAS_API_KEY:+cerebras}",
     "nvidia": "${env.NVIDIA_API_KEY:+nvidia}",
-    "vertexai": "${env.VERTEX_AI_PROJECT:+vertexai}",
     "azure": "${env.AZURE_API_KEY:+azure}",
 }
 
@@ -127,6 +128,7 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             BuildProvider(provider_type="remote::pgvector"),
             BuildProvider(provider_type="remote::qdrant"),
             BuildProvider(provider_type="remote::weaviate"),
+            BuildProvider(provider_type="remote::elasticsearch"),
         ],
         "files": [BuildProvider(provider_type="inline::localfs")],
         "safety": [
@@ -251,6 +253,15 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
                     cluster_url="${env.WEAVIATE_CLUSTER_URL:=}",
                 ),
             ),
+            Provider(
+                provider_id="${env.ELASTICSEARCH_URL:+elasticsearch}",
+                provider_type="remote::elasticsearch",
+                config=ElasticsearchVectorIOConfig.sample_run_config(
+                    f"~/.llama/distributions/{name}",
+                    elasticsearch_url="${env.ELASTICSEARCH_URL:=localhost:9200}",
+                    elasticsearch_api_key="${env.ELASTICSEARCH_API_KEY:=}",
+                ),
+            ),
         ],
         "files": [files_provider],
     }
@@ -260,6 +271,7 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
         default_models=[],
         default_tool_groups=default_tool_groups,
         default_shields=default_shields,
+        default_connectors=[],
         vector_stores_config=VectorStoresConfig(
             default_provider_id="faiss",
             default_embedding_model=QualifiedModel(
@@ -323,14 +335,6 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             "GEMINI_API_KEY": (
                 "",
                 "Gemini API Key",
-            ),
-            "VERTEX_AI_PROJECT": (
-                "",
-                "Google Cloud Project ID for Vertex AI",
-            ),
-            "VERTEX_AI_LOCATION": (
-                "us-central1",
-                "Google Cloud Location for Vertex AI",
             ),
             "SAMBANOVA_API_KEY": (
                 "",
