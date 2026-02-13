@@ -297,3 +297,10 @@ qdrant:
     size: 10Gi
   service:
     type: ClusterIP
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
