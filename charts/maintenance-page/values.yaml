@@ -1,0 +1,38 @@
+# Default values for maintenance-page
+# This is a YAML-formatted file.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Configuration for the maintenance page
+maintenance:
+  # The date/time when maintenance is expected to complete
+  until: ""
+  # The Matrix chat link for updates
+  chatLink: "https://matrix.to/#/#llm-service:tuwien.ac.at"
+  # Custom message to display
+  message: "Thank you for your patience."
+
+image:
+  repository: registry.k8s.io/ingress-nginx/custom-error-pages
+  tag: v1.2.7
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# The name of the service that will be referenced by ingress annotations
+# This should match what the toggle-maintenance.py script expects
+serviceName: maintenance-backend

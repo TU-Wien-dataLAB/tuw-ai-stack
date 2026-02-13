@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "maintenance-page.fullname" . }}
+  labels:
+    {{- include "maintenance-page.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "maintenance-page.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "maintenance-page.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: error-server
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: error-pages
+          mountPath: /www
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: error-pages
+        configMap:
+          name: {{ include "maintenance-page.fullname" . }}-pages
+          items:
+          - key: "503"
+            path: "503.html"
