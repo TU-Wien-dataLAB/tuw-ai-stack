@@ -18,7 +18,6 @@ securityContext: {}
 env:
   VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
   VLLM_MAX_TOKENS: "8192"
-  QDRANT_URL: "http://{{ .Release.Name }}-qdrant.{{ .Release.Namespace }}.svc.cluster.local:6333"
 
 replicaCount: 1
 
@@ -47,11 +46,13 @@ podSecurityContext:
 networkPolicy:
   enabled: true
   # List of namespaces to allow communication with
-  allowedNamespaces:
-    - default
+  # Note: Add the namespace where llama-stack is deployed (e.g., llama-stack-staging)
+  # to allow communication with qdrant sub-chart
+  allowedNamespaces: []
   # Example:
   # - open-webui
   # - vllm
+  # - llama-stack-staging
 
 service:
   type: ClusterIP
