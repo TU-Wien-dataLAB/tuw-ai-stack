@@ -36,37 +36,19 @@ providers:
       persistence:
         namespace: vector_io::sqlite_vec
         backend: kv_default
-  - provider_id: ${env.MILVUS_URL:+milvus}
-    provider_type: inline::milvus
-    config:
-      db_path: ${env.MILVUS_DB_PATH:=~/.llama/distributions/starter}/milvus.db
-      persistence:
-        namespace: vector_io::milvus
-        backend: kv_default
-  - provider_id: ${env.CHROMADB_URL:+chromadb}
-    provider_type: remote::chromadb
-    config:
-      url: ${env.CHROMADB_URL:=}
-      persistence:
-        namespace: vector_io::chroma_remote
-        backend: kv_default
-  - provider_id: ${env.PGVECTOR_DB:+pgvector}
-    provider_type: remote::pgvector
-    config:
-      host: ${env.PGVECTOR_HOST:=localhost}
-      port: ${env.PGVECTOR_PORT:=5432}
-      db: ${env.PGVECTOR_DB:=}
-      user: ${env.PGVECTOR_USER:=}
-      password: ${env.PGVECTOR_PASSWORD:=}
-      persistence:
-        namespace: vector_io::pgvector
-        backend: kv_default
   - provider_id: ${env.QDRANT_URL:+qdrant}
     provider_type: remote::qdrant
     config:
       api_key: ${env.QDRANT_API_KEY:=}
       persistence:
         namespace: vector_io::qdrant_remote
+        backend: kv_default
+  - provider_id: ${env.QDRANT_PATH:+qdrant}
+    provider_type: inline::qdrant
+    config:
+      path: ${env.QDRANT_PATH:=~/.llama/distributions/starter}/qdrant.db
+      persistence:
+        namespace: vector_io::qdrant
         backend: kv_default
   files:
   - provider_id: meta-reference-files

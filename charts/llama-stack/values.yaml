@@ -18,8 +18,7 @@ securityContext: {}
 env:
   VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
   VLLM_MAX_TOKENS: "8192"
-  MILVUS_DB_PATH: "/home/lls/.llama/distributions/starter/milvus.db"
-  MILVUS_URL: "/home/lls/.llama/distributions/starter/milvus"
+  QDRANT_PATH: "/home/lls/.llama/distributions/starter/qdrant"
 
 replicaCount: 1
 
@@ -161,30 +160,12 @@ providers:
         persistence:
           namespace: vector_io::sqlite_vec
           backend: kv_default
-    - provider_id: ${env.MILVUS_URL:+milvus}
-      provider_type: inline::milvus
+    - provider_id: ${env.QDRANT_PATH:+qdrant}
+      provider_type: inline::qdrant
       config:
-        db_path: ${env.MILVUS_DB_PATH:=~/.llama/distributions/starter}/milvus.db
+        path: ${env.QDRANT_PATH:=~/.llama/distributions/starter}/qdrant.db
         persistence:
-          namespace: vector_io::milvus
-          backend: kv_default
-    - provider_id: ${env.CHROMADB_URL:+chromadb}
-      provider_type: remote::chromadb
-      config:
-        url: ${env.CHROMADB_URL:=}
-        persistence:
-          namespace: vector_io::chroma_remote
-          backend: kv_default
-    - provider_id: ${env.PGVECTOR_DB:+pgvector}
-      provider_type: remote::pgvector
-      config:
-        host: ${env.PGVECTOR_HOST:=localhost}
-        port: ${env.PGVECTOR_PORT:=5432}
-        db: ${env.PGVECTOR_DB:=}
-        user: ${env.PGVECTOR_USER:=}
-        password: ${env.PGVECTOR_PASSWORD:=}
-        persistence:
-          namespace: vector_io::pgvector
+          namespace: vector_io::qdrant
           backend: kv_default
     - provider_id: ${env.QDRANT_URL:+qdrant}
       provider_type: remote::qdrant
