@@ -1,0 +1,6 @@
+dependencies:
+- name: qdrant
+  repository: https://qdrant.github.io/qdrant-helm
+  version: 1.12.0
+digest: sha256:8c0008e6de2c053abea4e912231d674eb83ca071463d2dbc01101c8841924a0a
+generated: "2026-02-13T11:48:00.774915+01:00"

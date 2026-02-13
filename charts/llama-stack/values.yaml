@@ -18,7 +18,7 @@ securityContext: {}
 env:
   VLLM_URL: "http://vllm-prod-router-service.vllm.svc.cluster.local/v1"
   VLLM_MAX_TOKENS: "8192"
-  QDRANT_PATH: "/home/lls/.llama/distributions/starter/qdrant"
+  QDRANT_URL: "http://{{ .Release.Name }}-qdrant.{{ .Release.Namespace }}.svc.cluster.local:6333"
 
 replicaCount: 1
 
@@ -47,7 +47,8 @@ podSecurityContext:
 networkPolicy:
   enabled: true
   # List of namespaces to allow communication with
-  allowedNamespaces: []
+  allowedNamespaces:
+    - default
   # Example:
   # - open-webui
   # - vllm
@@ -160,16 +161,10 @@ providers:
         persistence:
           namespace: vector_io::sqlite_vec
           backend: kv_default
-    - provider_id: ${env.QDRANT_PATH:+qdrant}
-      provider_type: inline::qdrant
-      config:
-        path: ${env.QDRANT_PATH:=~/.llama/distributions/starter}/qdrant.db
-        persistence:
-          namespace: vector_io::qdrant
-          backend: kv_default
     - provider_id: ${env.QDRANT_URL:+qdrant}
       provider_type: remote::qdrant
       config:
+        url: ${env.QDRANT_URL:=}
         api_key: ${env.QDRANT_API_KEY:=}
         persistence:
           namespace: vector_io::qdrant_remote
@@ -292,3 +287,12 @@ vectorStores:
 # Safety configuration
 safety:
   default_shield_id: llama-guard
+
+# Qdrant configuration (sub-chart)
+qdrant:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+  service:
+    type: ClusterIP

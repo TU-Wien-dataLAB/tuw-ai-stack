@@ -39,16 +39,10 @@ providers:
   - provider_id: ${env.QDRANT_URL:+qdrant}
     provider_type: remote::qdrant
     config:
+      url: ${env.QDRANT_URL:=}
       api_key: ${env.QDRANT_API_KEY:=}
       persistence:
         namespace: vector_io::qdrant_remote
-        backend: kv_default
-  - provider_id: ${env.QDRANT_PATH:+qdrant}
-    provider_type: inline::qdrant
-    config:
-      path: ${env.QDRANT_PATH:=~/.llama/distributions/starter}/qdrant.db
-      persistence:
-        namespace: vector_io::qdrant
         backend: kv_default
   files:
   - provider_id: meta-reference-files
