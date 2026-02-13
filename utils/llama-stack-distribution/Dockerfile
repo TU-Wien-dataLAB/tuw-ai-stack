@@ -156,7 +156,7 @@ exec llama stack run "$@"
 EOF
 RUN chmod +x /usr/local/bin/llama-stack-entrypoint.sh
 
-RUN mkdir -p /.llama /.cache /home/lls/.cache/milvus && chmod -R g+rw /app /.llama /.cache /home/lls/.cache/milvus
+RUN mkdir -p /.llama /.cache /home/lls/.cache/milvus && chmod -R g+rw /app /.llama /.cache && chmod -R a+rwx /home/lls/.cache/milvus
 
 ENTRYPOINT ["/usr/local/bin/llama-stack-entrypoint.sh"]
 
