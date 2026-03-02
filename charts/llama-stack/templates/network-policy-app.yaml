@@ -1,17 +1,22 @@
 {{- if .Values.networkPolicy.enabled }}
-kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: {{ include "llama-stack.fullname" . }}-network-policy
+  name: {{ include "llama-stack.fullname" . }}-app
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "llama-stack.labels" . | nindent 4 }}
+    policy.kubernetes.io/type: app
 spec:
-  podSelector: {}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: llama-stack
+      app.kubernetes.io/instance: {{ .Release.Name }}
   policyTypes:
     - Egress
   egress:
-  # Allow egress to internet (exclude private/cluster IP ranges)
+  # Allow egress to internet (block all private IP ranges)
+  # This prevents access to Kubernetes API server and internal cluster services
   - to:
     - ipBlock:
         cidr: "0.0.0.0/0"
@@ -27,8 +32,11 @@ spec:
     - podSelector:
         matchLabels:
           k8s-app: "kube-dns"
-  {{- if .Values.networkPolicy.allowedNamespaces }}
+    ports:
+    - protocol: UDP
+      port: 53
   # Allow egress to specified namespaces
+  {{- if .Values.networkPolicy.allowedNamespaces }}
   {{- range .Values.networkPolicy.allowedNamespaces }}
   - to:
     - namespaceSelector:
