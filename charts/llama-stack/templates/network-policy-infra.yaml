@@ -1,0 +1,21 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "llama-stack.fullname" . }}-infra
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "llama-stack.labels" . | nindent 4 }}
+    policy.kubernetes.io/type: infra
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: NotIn
+      values:
+      - llama-stack
+  policyTypes:
+    - Egress
+  egress:
+  - {}
+{{- end }}

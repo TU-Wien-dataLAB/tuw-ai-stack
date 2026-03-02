@@ -45,9 +45,6 @@ podSecurityContext:
 # Network policy configuration
 networkPolicy:
   enabled: true
-  # Kubernetes API server ClusterIP (required for CNPG operator communication)
-  # Default is for clusters using 172.24.0.0/14 service CIDR
-  kubernetesApiCidr: "172.24.0.1/32"
   # List of namespaces to allow communication with
   # Note: Add the namespace where llama-stack is deployed (e.g., llama-stack-staging)
   # to allow communication with qdrant sub-chart
