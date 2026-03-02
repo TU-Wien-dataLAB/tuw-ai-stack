@@ -1,0 +1,27 @@
+{{- if include "llama-stack.postgresEnabled" . }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "llama-stack.fullname" . }}-postgres
+  labels:
+    {{- include "llama-stack.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.cnpg.instances | default 1 }}
+  imageName: {{ .Values.cnpg.image | default "ghcr.io/cloudnative-pg/postgresql:17.2" }}
+
+  bootstrap:
+    initdb:
+      database: {{ .Values.cnpg.database | default "llamastack" }}
+      owner: {{ .Values.cnpg.owner | default "llamastack" }}
+
+  storage:
+    size: {{ (.Values.cnpg.storage).size | default "10Gi" }}
+    {{- if (.Values.cnpg.storage).storageClass }}
+    storageClass: {{ .Values.cnpg.storage.storageClass }}
+    {{- end }}
+
+  {{- if .Values.cnpg.resources }}
+  resources:
+    {{- toYaml .Values.cnpg.resources | nindent 4 }}
+  {{- end }}
+{{- end }}

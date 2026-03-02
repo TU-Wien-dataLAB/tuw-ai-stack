@@ -96,6 +96,24 @@ spec:
             - name: HOME
               value: "/home/lls"
           {{- end }}
+          {{- if include "llama-stack.postgresEnabled" . }}
+            - name: POSTGRES_HOST
+              value: {{ printf "%s-postgres-rw.%s.svc.cluster.local" (include "llama-stack.fullname" .) .Release.Namespace | quote }}
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: {{ .Values.cnpg.database | default "llamastack" | quote }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llama-stack.fullname" . }}-postgres-app
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "llama-stack.fullname" . }}-postgres-app
+                  key: password
+          {{- end }}
             - name: LLAMA_STACK_PORT
               value: {{ .Values.service.port | quote }}
           {{- if .Values.telemetry.enabled }}

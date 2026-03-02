@@ -60,3 +60,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Check if any storage backend uses PostgreSQL.
+Returns "true" if any backend type contains "postgres", empty string otherwise.
+*/}}
+{{- define "llama-stack.postgresEnabled" -}}
+{{- $found := false -}}
+{{- range $name, $backend := .Values.storage.backends -}}
+  {{- if or (eq (toString $backend.type) "kv_postgres") (eq (toString $backend.type) "sql_postgres") -}}
+    {{- $found = true -}}
+  {{- end -}}
+{{- end -}}
+{{- if $found -}}true{{- end -}}
+{{- end }}

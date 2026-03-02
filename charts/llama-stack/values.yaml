@@ -221,7 +221,28 @@ providers:
           namespace: batches
           backend: kv_default
 
+# CloudNativePG cluster configuration
+# Only used when storage.backends contains kv_postgres or sql_postgres types
+cnpg:
+  instances: 1
+  image: ghcr.io/cloudnative-pg/postgresql:17.2
+  database: llamastack
+  owner: llamastack
+  storage:
+    size: 10Gi
+    # storageClass: ""  # Uses default storage class if omitted
+  # resources:
+  #   limits:
+  #     cpu: 2
+  #     memory: 4Gi
+  #   requests:
+  #     cpu: 1
+  #     memory: 2Gi
+
 # Storage configuration
+# Default uses SQLite. To use PostgreSQL, replace the backends with
+# kv_postgres and sql_postgres types. This automatically provisions
+# a CNPG PostgreSQL cluster.
 storage:
   backends:
     kv_default:
@@ -244,6 +265,9 @@ storage:
       backend: sql_default
     prompts:
       namespace: prompts
+      backend: kv_default
+    connectors:
+      namespace: connectors
       backend: kv_default
 
 # Registered resources (models, shields, vector DBs, etc.)
