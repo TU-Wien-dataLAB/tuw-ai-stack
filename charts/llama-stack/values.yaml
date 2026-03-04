@@ -233,13 +233,13 @@ cnpg:
   storage:
     size: 10Gi
     # storageClass: ""  # Uses default storage class if omitted
-  # resources:
-  #   limits:
-  #     cpu: 2
-  #     memory: 4Gi
-  #   requests:
-  #     cpu: 1
-  #     memory: 2Gi
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 2
+      memory: 4Gi
 
 # Storage configuration
 # Default uses SQLite. To use PostgreSQL, replace the backends with
