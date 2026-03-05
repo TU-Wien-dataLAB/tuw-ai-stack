@@ -105,11 +105,11 @@ ingress:
 
 resources:
   limits:
-    cpu: 8
-    memory: 16Gi
+    cpu: 4
+    memory: 8Gi
   requests:
-    cpu: 8
-    memory: 16Gi
+    cpu: 4
+    memory: 8Gi
 
 livenessProbe:
   httpGet:
@@ -302,7 +302,7 @@ registeredResources:
 server:
   port: 8321
   host: "0.0.0.0"
-  workers: 8
+  workers: 1
 
 # Vector stores configuration
 vectorStores:
