@@ -2,10 +2,14 @@ deployment:
   replicas: 1
   image:
     repository: ghcr.io/speaches-ai/speaches
-    tag: 0.8.3-cuda-12.6.3
+    tag: 0.8.3-cpu
   resources:
     limits:
-      nvidia.com/gpu: 1
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 4
+      memory: 8Gi
   ports:
     containerPort: 8000
   nodeSelector:
