@@ -7,9 +7,11 @@ deployment:
     limits:
       cpu: 4
       memory: 8Gi
+      nvidia.com/gpu: '0'
     requests:
       cpu: 4
       memory: 8Gi
+      nvidia.com/gpu: '0'
   ports:
     containerPort: 8000
   nodeSelector:
