@@ -31,8 +31,16 @@ spec:
             - |
               set -e
               echo "Downloading model {{ .download.modelId }} to {{ .download.mountPath }}"
-              uv run --with huggingface_hub huggingface-cli download {{ .download.modelId }}
-              echo "Download complete"
+              uv run --with huggingface_hub python -c "
+              import os
+              os.environ['HF_HUB_ENABLE_HF_TRANSFER'] = '1'
+              from huggingface_hub import snapshot_download
+              snapshot_download(
+                  repo_id='{{ .download.modelId }}',
+                  repo_type='model'
+              )
+              print('Download complete')
+              "
           volumeMounts:
             - name: model-storage
               mountPath: {{ .download.mountPath }}
