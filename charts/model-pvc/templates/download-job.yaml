@@ -10,8 +10,6 @@ metadata:
   labels:
     app: model-downloader
     model: {{ .download.modelId | replace "/" "--" }}
-  annotations:
-    "argocd.argoproj.io/sync-wave": "1"
 spec:
   template:
     spec:
