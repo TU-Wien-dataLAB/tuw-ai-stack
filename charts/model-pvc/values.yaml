@@ -1,0 +1,16 @@
+pvcs: []
+  # - name: my-model-storage
+  #   namespace: llm-d
+  #   labels:
+  #     app: my-modelservice
+  #   annotations: {}
+  #   accessModes:
+  #     - ReadWriteMany
+  #   storage: 100Gi
+  #   storageClassName: ""
+  #   download:
+  #     enabled: false
+  #     modelId: ""
+  #     hfTokenSecret: ""
+  #     hfTokenKey: HF_TOKEN
+  #     mountPath: /model-cache

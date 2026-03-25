@@ -10,6 +10,7 @@ What is being deployed?
 - **llama-stack** - unified OpenAI-compatible API layer
 - **loki** - log aggregation system with Alloy
 - **mcp-servers** - Model Context Protocol servers for AI/ML workloads
+- **model-pvc** - PersistentVolumeClaim management for LLM model storage with optional download jobs
 - **open-webui** - LLM chat interface
 - **speaches** - speech-to-text service
 - **local-ai** - image generation (helm chart can be found at [https://github.com/go-skynet/helm-charts/tree/main/charts/local-ai](https://github.com/go-skynet/helm-charts/tree/main/charts/local-ai))

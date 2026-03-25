@@ -1,0 +1,47 @@
+{{- range .Values.pvcs }}
+{{- if and .download .download.enabled .download.modelId }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .name }}-download
+  {{- if .namespace }}
+  namespace: {{ .namespace }}
+  {{- end }}
+  labels:
+    app: model-downloader
+    model: {{ .download.modelId | replace "/" "--" }}
+  annotations:
+    "argocd.argoproj.io/sync-wave": "1"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: downloader
+          image: astral/uv:0.11-trixie-slim
+          env:
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .download.hfTokenSecret }}
+                  key: {{ .download.hfTokenKey }}
+            - name: HF_HOME
+              value: {{ .download.mountPath }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Downloading model {{ .download.modelId }} to {{ .download.mountPath }}"
+              uv run --with huggingface_hub huggingface-cli download {{ .download.modelId }}
+              echo "Download complete"
+          volumeMounts:
+            - name: model-storage
+              mountPath: {{ .download.mountPath }}
+      volumes:
+        - name: model-storage
+          persistentVolumeClaim:
+            claimName: {{ .name }}
+---
+{{- end }}
+{{- end }}

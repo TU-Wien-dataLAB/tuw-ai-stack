@@ -1,0 +1,6 @@
+apiVersion: v2
+name: model-pvc
+description: A Helm chart for managing PersistentVolumeClaims for large language model storage
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
