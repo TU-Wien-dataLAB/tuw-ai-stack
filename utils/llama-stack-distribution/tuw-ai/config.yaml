@@ -1,11 +1,14 @@
 version: 2
 image_name: tuw-ai
 apis:
-- agents
 - batches
+- datasetio
+- eval
 - files
 - inference
+- responses
 - safety
+- scoring
 - tool_runtime
 - vector_io
 providers:
@@ -59,9 +62,9 @@ providers:
       excluded_categories: []
   - provider_id: code-scanner
     provider_type: inline::code-scanner
-  agents:
-  - provider_id: meta-reference
-    provider_type: inline::meta-reference
+  responses:
+  - provider_id: builtin
+    provider_type: inline::builtin
     config:
       persistence:
         agent_state:
