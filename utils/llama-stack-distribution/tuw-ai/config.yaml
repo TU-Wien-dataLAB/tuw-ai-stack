@@ -2,14 +2,11 @@ version: 2
 image_name: tuw-ai
 apis:
 - batches
-- datasetio
-- eval
 - file_processors
 - files
 - inference
 - responses
 - safety
-- scoring
 - tool_runtime
 - vector_io
 providers:

@@ -8,14 +8,10 @@ data:
   config.yaml: |
     version: 2
     image_name: tuw-ai
+    {{- with .Values.apis }}
     apis:
-      - agents
-      - batches
-      - files
-      - inference
-      - safety
-      - tool_runtime
-      - vector_io
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.providers }}
     providers:
       {{- toYaml . | nindent 6 }}

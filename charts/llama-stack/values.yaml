@@ -1,6 +1,17 @@
 # Note: The starter distribution uses built-in configuration
 # All providers are configured via environment variables below
 
+# APIs to enable
+apis:
+  - batches
+  - file_processors
+  - files
+  - inference
+  - responses
+  - safety
+  - tool_runtime
+  - vector_io
+
 # Telemetry configuration
 telemetry:
   enabled: false
@@ -185,9 +196,9 @@ providers:
         excluded_categories: []
     - provider_id: code-scanner
       provider_type: inline::code-scanner
-  agents:
-    - provider_id: meta-reference
-      provider_type: inline::meta-reference
+  responses:
+    - provider_id: builtin
+      provider_type: inline::builtin
       config:
         persistence:
           agent_state:
@@ -209,8 +220,8 @@ providers:
       config:
         api_key: ${env.TAVILY_SEARCH_API_KEY:=}
         max_results: 3
-    - provider_id: rag-runtime
-      provider_type: inline::rag-runtime
+    - provider_id: file-search
+      provider_type: inline::file-search
     - provider_id: model-context-protocol
       provider_type: remote::model-context-protocol
   batches:
@@ -222,6 +233,9 @@ providers:
           backend: kv_default
         max_concurrent_batches: 1
         max_concurrent_requests_per_batch: 10
+  file_processors:
+    - provider_id: pypdf
+      provider_type: inline::pypdf
 
 # CloudNativePG cluster configuration
 # Only used when storage.backends contains kv_postgres or sql_postgres types
@@ -296,7 +310,7 @@ registeredResources:
     - toolgroup_id: builtin::websearch
       provider_id: tavily-search
     - toolgroup_id: builtin::rag
-      provider_id: rag-runtime
+      provider_id: file-search
 
 # Server configuration
 server:
