@@ -21,6 +21,9 @@ from llama_stack.core.storage.kvstore.config import PostgresKVStoreConfig
 from llama_stack.core.storage.sqlstore.sqlstore import PostgresSqlStoreConfig
 from llama_stack.core.utils.dynamic import instantiate_class_type
 from llama_stack.distributions.template import DistributionTemplate, RunConfigSettings
+from llama_stack.providers.inline.file_processor.pypdf.config import (
+    PyPDFFileProcessorConfig,
+)
 from llama_stack.providers.inline.files.localfs.config import LocalfsFilesImplConfig
 from llama_stack.providers.inline.inference.sentence_transformers import (
     SentenceTransformersInferenceConfig,
@@ -131,6 +134,7 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             BuildProvider(provider_type="remote::elasticsearch"),
         ],
         "files": [BuildProvider(provider_type="inline::localfs")],
+        "file_processors": [BuildProvider(provider_type="inline::pypdf")],
         "safety": [
             BuildProvider(provider_type="inline::llama-guard"),
             BuildProvider(provider_type="inline::code-scanner"),
@@ -150,7 +154,7 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
         "tool_runtime": [
             BuildProvider(provider_type="remote::brave-search"),
             BuildProvider(provider_type="remote::tavily-search"),
-            BuildProvider(provider_type="inline::rag-runtime"),
+            BuildProvider(provider_type="inline::file-search"),
             BuildProvider(provider_type="remote::model-context-protocol"),
         ],
         "batches": [
@@ -177,7 +181,7 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
         ),
         ToolGroupInput(
             toolgroup_id="builtin::rag",
-            provider_id="rag-runtime",
+            provider_id="file-search",
         ),
     ]
     default_shields = [
@@ -264,6 +268,13 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             ),
         ],
         "files": [files_provider],
+        "file_processors": [
+            Provider(
+                provider_id="pypdf",
+                provider_type="inline::pypdf",
+                config=PyPDFFileProcessorConfig.sample_run_config(),
+            ),
+        ],
     }
 
     base_run_settings = RunConfigSettings(

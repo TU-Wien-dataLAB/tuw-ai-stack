@@ -4,6 +4,7 @@ apis:
 - batches
 - datasetio
 - eval
+- file_processors
 - files
 - inference
 - responses
@@ -55,6 +56,9 @@ providers:
       metadata_store:
         table_name: files_metadata
         backend: sql_default
+  file_processors:
+  - provider_id: pypdf
+    provider_type: inline::pypdf
   safety:
   - provider_id: llama-guard
     provider_type: inline::llama-guard
@@ -86,8 +90,8 @@ providers:
     config:
       api_key: ${env.TAVILY_SEARCH_API_KEY:=}
       max_results: 3
-  - provider_id: rag-runtime
-    provider_type: inline::rag-runtime
+  - provider_id: file-search
+    provider_type: inline::file-search
   - provider_id: model-context-protocol
     provider_type: remote::model-context-protocol
   batches:
@@ -143,7 +147,7 @@ registered_resources:
   - toolgroup_id: builtin::websearch
     provider_id: tavily-search
   - toolgroup_id: builtin::rag
-    provider_id: rag-runtime
+    provider_id: file-search
 server:
   port: 8321
 vector_stores:
