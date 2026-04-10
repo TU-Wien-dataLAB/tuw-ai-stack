@@ -55,6 +55,10 @@ loki:
   bloomGateway:
     replicas: 0
 
+  memberlist:
+    service:
+      publishNotReadyAddresses: true
+
   alloy:
     configMap:
       # TODO: url of loki is hard-coded for loki namespace 
