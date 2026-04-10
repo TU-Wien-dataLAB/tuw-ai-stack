@@ -2,6 +2,10 @@ loki:
   loki:
     commonConfig:
       replication_factor: 1
+      ring:
+        instance_addr: 127.0.0.1
+        kvstore:
+          store: inmemory  # Required for singleBinary mode - avoids memberlist-kv init error
     schemaConfig:
       configs:
         - from: "2024-04-01"
