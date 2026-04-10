@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-matrix-template
+  namespace: {{ .Release.Namespace }}
+data:
+  matrix-alerts.tmpl: |{{ .Files.Get "files/matrix-alerts.tmpl" | nindent 4 }}

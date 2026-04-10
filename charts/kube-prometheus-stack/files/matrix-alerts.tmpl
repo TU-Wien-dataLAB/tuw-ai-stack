@@ -1,0 +1,32 @@
+{{- define "matrix.payload" -}}
+{{- $status := .Status -}}
+{{- $emoji := "🔥" -}}
+{{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ end -}}
+{{- $alertname := .CommonLabels.alertname -}}
+{{- $severity := .CommonLabels.severity -}}
+{{- $namespace := .CommonLabels.namespace -}}
+{{- $description := .CommonAnnotations.description -}}
+{{- $runbookURL := .CommonAnnotations.runbook_url -}}
+{{- $externalURL := .ExternalURL -}}
+{{- $alerts := .Alerts -}}
+{{- $alertCount := len $alerts -}}
+<h3>{{ $emoji }} {{ $status | upper }}: {{ $alertname }}</h3>
+<p>
+<b>Alert Count:</b> {{ $alertCount }}<br>
+<b>Severity:</b> {{ $severity }}<br>
+<b>Namespace:</b> {{ $namespace }}<br>
+<b>Description:</b> {{ $description }}<br>
+{{- if $runbookURL }}
+<b>Runbook:</b> <a href="{{ $runbookURL }}">View Runbook</a><br>
+{{- end }}
+<b>Alertmanager:</b> <a href="{{ $externalURL }}">View Alerts</a>
+</p>
+{{- if gt $alertCount 1 }}
+<p><b>Individual Alerts:</b></p>
+<ul>
+{{- range $alerts }}
+<li>{{ .Labels.instance }} - {{ .Annotations.summary }}</li>
+{{- end }}
+</ul>
+{{- end }}
+{{- end -}}
