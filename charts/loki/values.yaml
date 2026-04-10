@@ -55,6 +55,7 @@ loki:
   bloomGateway:
     replicas: 0
 
+  # Memberlist service configuration - required for singleBinary mode to prevent ring deadlock
   memberlist:
     service:
       publishNotReadyAddresses: true
