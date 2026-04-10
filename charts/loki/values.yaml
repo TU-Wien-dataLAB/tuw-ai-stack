@@ -22,6 +22,8 @@ loki:
 
   minio:
     enabled: true
+    persistence:
+      size: 50Gi
 
   deploymentMode: Distributed
 
