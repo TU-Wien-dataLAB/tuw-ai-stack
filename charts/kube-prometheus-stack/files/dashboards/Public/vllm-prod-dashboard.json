@@ -1015,10 +1015,10 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(model_name) (vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "avg by(model_name, pod) (vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1091,10 +1091,10 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "avg by(model_name, pod) (vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1260,11 +1260,11 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "avg by(model_name, pod) (vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -1359,11 +1359,11 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:time_per_output_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:time_per_output_token_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "avg by(model_name, pod) (vllm:time_per_output_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:time_per_output_token_seconds_count{model_name=~\"$model_name\"})",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
