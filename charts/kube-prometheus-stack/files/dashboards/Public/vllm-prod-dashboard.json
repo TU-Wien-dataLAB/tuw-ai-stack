@@ -93,7 +93,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:e2e_request_latency_seconds_sum{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:e2e_request_latency_seconds_count{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:e2e_request_latency_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:e2e_request_latency_seconds_count{model_name=~\"$model_name\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -165,7 +165,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(le) (vllm:e2e_request_latency_seconds_bucket{job=\"vllm-prod-engine-service\"})",
+          "expr": "sum by(le) (vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -238,7 +238,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:prompt_tokens_total{job=\"vllm-prod-engine-service\"}[$__range])",
+          "expr": "increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range])",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -311,7 +311,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:generation_tokens_total{job=\"vllm-prod-engine-service\"}[$__range])",
+          "expr": "increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range])",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -421,7 +421,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "vllm:num_requests_running{job=\"vllm-prod-engine-service\"}",
+          "expr": "vllm:num_requests_running{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -517,7 +517,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "vllm:num_requests_waiting{job=\"vllm-prod-engine-service\"}",
+          "expr": "vllm:num_requests_waiting{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -613,7 +613,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:prompt_tokens_total{job=\"vllm-prod-engine-service\"}[$__rate_interval])",
+          "expr": "increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -709,7 +709,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:generation_tokens_total{job=\"vllm-prod-engine-service\"}[$__rate_interval])",
+          "expr": "increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -807,7 +807,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "vllm:gpu_cache_usage_perc{job=\"vllm-prod-engine-service\"}",
+          "expr": "vllm:gpu_cache_usage_perc{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -904,7 +904,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:prefix_cache_hits_total{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:prompt_tokens_total{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:prefix_cache_hits_total{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:prompt_tokens_total{model_name=~\"$model_name\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -1015,7 +1015,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(model_name) (vllm:time_to_first_token_seconds_sum{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:time_to_first_token_seconds_count{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -1091,7 +1091,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:request_queue_time_seconds_sum{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:request_queue_time_seconds_count{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -1162,7 +1162,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(le) (vllm:time_to_first_token_seconds_bucket{job=\"vllm-prod-engine-service\"})",
+          "expr": "sum by(le) (vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1260,7 +1260,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:request_prefill_time_seconds_sum{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:request_prefill_time_seconds_count{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1359,7 +1359,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:time_per_output_token_seconds_sum{job=\"vllm-prod-engine-service\"}) / avg by(model_name) (vllm:time_per_output_token_seconds_count{job=\"vllm-prod-engine-service\"})",
+          "expr": "avg by(model_name) (vllm:time_per_output_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:time_per_output_token_seconds_count{model_name=~\"$model_name\"})",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1378,7 +1378,31 @@
   "schemaVersion": 40,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(vllm:e2e_request_latency_seconds_count, model_name)",
+        "includeAll": true,
+        "multi": true,
+        "name": "model_name",
+        "options": [],
+        "query": {
+          "query": "label_values(vllm:e2e_request_latency_seconds_count, model_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-30m",
