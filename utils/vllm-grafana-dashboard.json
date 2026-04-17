@@ -91,7 +91,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
             "id": 2,
             "options": {
                 "legend": {
@@ -113,7 +118,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "instant": false,
@@ -129,7 +134,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -146,7 +151,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -163,7 +168,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -239,7 +244,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
             "id": 3,
             "options": {
                 "legend": {
@@ -260,10 +270,10 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "rate(vllm:e2e_request_latency_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])\n/\nrate(vllm:e2e_request_latency_seconds_count{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:e2e_request_latency_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])\n/\nrate(vllm:e2e_request_latency_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "Average - {{endpoint}}",
+                    "legendFormat": "Average - {{model_name}}",
                     "range": true,
                     "refId": "E"
                 }
@@ -332,7 +342,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
             "id": 4,
             "options": {
                 "legend": {
@@ -354,11 +369,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "rate(vllm:prompt_tokens_total{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "instant": false,
-                    "legendFormat": "Prompt Tokens/Sec - {{endpoint}}",
+                    "legendFormat": "Prompt Tokens/Sec - {{model_name}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -428,7 +443,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 8
+            },
             "id": 5,
             "options": {
                 "legend": {
@@ -450,11 +470,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "rate(vllm:generation_tokens_total{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "instant": false,
-                    "legendFormat": "Generation Tokens/Sec - {{endpoint}}",
+                    "legendFormat": "Generation Tokens/Sec - {{model_name}}",
                     "range": true,
                     "refId": "B",
                     "useBackend": false
@@ -525,7 +545,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 16
+            },
             "id": 6,
             "options": {
                 "legend": {
@@ -547,7 +572,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "instant": false,
@@ -563,7 +588,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -580,7 +605,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -597,7 +622,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:time_per_output_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -673,7 +698,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 24
+            },
             "id": 7,
             "options": {
                 "legend": {
@@ -694,10 +724,10 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "rate(vllm:time_per_output_token_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])\n/\nrate(vllm:time_per_output_token_seconds_count{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:time_per_output_token_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])\n/\nrate(vllm:time_per_output_token_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "Mean - {{endpoint}}",
+                    "legendFormat": "Mean - {{model_name}}",
                     "range": true,
                     "refId": "E"
                 }
@@ -767,7 +797,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 16
+            },
             "id": 8,
             "options": {
                 "legend": {
@@ -789,11 +824,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "vllm:num_requests_running{endpoint=~\"$endpoint\"}",
+                    "expr": "vllm:num_requests_running{model_name=~\"$model_name\"}",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Num Running - {{endpoint}}",
+                    "legendFormat": "Num Running - {{model_name}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -864,7 +899,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 24
+            },
             "id": 9,
             "options": {
                 "legend": {
@@ -886,11 +926,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "vllm:num_requests_swapped{endpoint=~\"$endpoint\"}",
+                    "expr": "vllm:num_requests_swapped{model_name=~\"$model_name\"}",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Num Swapped - {{endpoint}}",
+                    "legendFormat": "Num Swapped - {{model_name}}",
                     "range": true,
                     "refId": "B",
                     "useBackend": false
@@ -961,7 +1001,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 24
+            },
             "id": 10,
             "options": {
                 "legend": {
@@ -983,11 +1028,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "vllm:num_requests_waiting{endpoint=~\"$endpoint\"}",
+                    "expr": "vllm:num_requests_waiting{model_name=~\"$model_name\"}",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Num Waiting - {{endpoint}}",
+                    "legendFormat": "Num Waiting - {{model_name}}",
                     "range": true,
                     "refId": "C",
                     "useBackend": false
@@ -1058,7 +1103,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 32
+            },
             "id": 11,
             "options": {
                 "legend": {
@@ -1080,7 +1130,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.99, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -1097,7 +1147,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.95, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "instant": false,
@@ -1113,7 +1163,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.9, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -1130,7 +1180,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{endpoint=~\"$endpoint\"}[$__rate_interval])))",
+                    "expr": "histogram_quantile(0.5, sum by(le) (rate(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"}[$__rate_interval])))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -1206,7 +1256,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 32
+            },
             "id": 12,
             "options": {
                 "legend": {
@@ -1227,10 +1282,10 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "rate(vllm:time_to_first_token_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])\n/\nrate(vllm:time_to_first_token_seconds_count{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])\n/\nrate(vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "Average - {{endpoint}}",
+                    "legendFormat": "Average - {{model_name}}",
                     "range": true,
                     "refId": "E"
                 }
@@ -1300,7 +1355,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 40},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 40
+            },
             "id": 13,
             "options": {
                 "legend": {
@@ -1321,9 +1381,9 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "vllm:gpu_cache_usage_perc{endpoint=~\"$endpoint\"}",
+                    "expr": "vllm:gpu_cache_usage_perc{model_name=~\"$model_name\"}",
                     "instant": false,
-                    "legendFormat": "GPU Cache Usage - {{endpoint}}",
+                    "legendFormat": "GPU Cache Usage - {{model_name}}",
                     "range": true,
                     "refId": "A"
                 }
@@ -1393,7 +1453,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 40},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 40
+            },
             "id": 14,
             "options": {
                 "legend": {
@@ -1414,10 +1479,10 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "vllm:cpu_cache_usage_perc{endpoint=~\"$endpoint\"}",
+                    "expr": "vllm:cpu_cache_usage_perc{model_name=~\"$model_name\"}",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "CPU Cache Usage - {{endpoint}}",
+                    "legendFormat": "CPU Cache Usage - {{model_name}}",
                     "range": true,
                     "refId": "B"
                 }
@@ -1446,7 +1511,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 48},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 48
+            },
             "id": 15,
             "options": {
                 "calculate": false,
@@ -1468,7 +1538,7 @@
                     "color": "rgba(255,0,255,0.7)"
                 },
                 "filterValues": {
-                    "le": 1e-9
+                    "le": 1e-09
                 },
                 "legend": {
                     "show": true
@@ -1498,12 +1568,12 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(le) (increase(vllm:request_prompt_tokens_bucket{endpoint=~\"$endpoint\"}[$__rate_interval]))",
+                    "expr": "sum by(le) (increase(vllm:request_prompt_tokens_bucket{model_name=~\"$model_name\"}[$__rate_interval]))",
                     "format": "heatmap",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "{{le}} - {{endpoint}}",
+                    "legendFormat": "{{le}} - {{model_name}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -1533,7 +1603,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 48},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 48
+            },
             "id": 16,
             "options": {
                 "calculate": false,
@@ -1555,7 +1630,7 @@
                     "color": "rgba(255,0,255,0.7)"
                 },
                 "filterValues": {
-                    "le": 1e-9
+                    "le": 1e-09
                 },
                 "legend": {
                     "show": true
@@ -1585,7 +1660,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(le) (increase(vllm:request_generation_tokens_bucket{endpoint=~\"$endpoint\"}[$__rate_interval]))",
+                    "expr": "sum by(le) (increase(vllm:request_generation_tokens_bucket{model_name=~\"$model_name\"}[$__rate_interval]))",
                     "format": "heatmap",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
@@ -1659,7 +1734,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 56},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 56
+            },
             "id": 17,
             "options": {
                 "legend": {
@@ -1681,7 +1761,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(finished_reason) (increase(vllm:request_success_total{endpoint=~\"$endpoint\"}[$__rate_interval]))",
+                    "expr": "sum by(finished_reason) (increase(vllm:request_success_total{model_name=~\"$model_name\"}[$__rate_interval]))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
@@ -1755,7 +1835,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 56},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 56
+            },
             "id": 18,
             "options": {
                 "legend": {
@@ -1777,11 +1862,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "rate(vllm:request_queue_time_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Queue Time in Sec  - {{endpoint}}",
+                    "legendFormat": "Queue Time in Sec  - {{model_name}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -1850,7 +1935,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 64},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 64
+            },
             "id": 19,
             "options": {
                 "legend": {
@@ -1872,11 +1962,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "rate(vllm:request_prefill_time_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Prefill - {{endpoint}}",
+                    "legendFormat": "Prefill - {{model_name}}",
                     "range": true,
                     "refId": "A"
                 }
@@ -1944,7 +2034,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 64},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 64
+            },
             "id": 20,
             "options": {
                 "legend": {
@@ -1965,10 +2060,10 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "rate(vllm:request_decode_time_seconds_sum{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:request_decode_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval])",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "Decode - {{endpoint}}",
+                    "legendFormat": "Decode - {{model_name}}",
                     "range": true,
                     "refId": "B"
                 }
@@ -2036,7 +2131,12 @@
                 },
                 "overrides": []
             },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 72},
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 72
+            },
             "id": 21,
             "options": {
                 "legend": {
@@ -2058,11 +2158,11 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "rate(vllm:request_max_num_generation_tokens_sum{endpoint=~\"$endpoint\"}[$__rate_interval])",
+                    "expr": "rate(vllm:request_max_num_generation_tokens_sum{model_name=~\"$model_name\"}[$__rate_interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "instant": false,
-                    "legendFormat": "Tokens - {{endpoint}}",
+                    "legendFormat": "Tokens - {{model_name}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -2079,20 +2179,20 @@
         "list": [
             {
                 "current": {
-                    "text": "vllm",
-                    "value": "vllm"
+                    "text": "All",
+                    "value": "$__all"
                 },
                 "datasource": {
                     "type": "prometheus",
                     "uid": "prometheus"
                 },
-                "definition": "label_values(vllm:avg_generation_throughput_toks_per_s, endpoint)",
-                "includeAll": false,
+                "definition": "label_values(vllm:e2e_request_latency_seconds_count, model_name)",
+                "includeAll": true,
                 "multi": true,
-                "name": "endpoint",
+                "name": "model_name",
                 "options": [],
                 "query": {
-                    "query": "label_values(vllm:avg_generation_throughput_toks_per_s, endpoint)",
+                    "query": "label_values(vllm:e2e_request_latency_seconds_count, model_name)",
                     "refId": "StandardVariableQuery"
                 },
                 "refresh": 1,
