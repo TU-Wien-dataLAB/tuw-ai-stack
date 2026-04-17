@@ -39,13 +39,9 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Average Latency by Model",
+      "description": "Total number of prompt tokens processed within the specified time.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -53,24 +49,22 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 60
               }
             ]
           },
-          "unit": "dtdurations"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 1
       },
-      "id": 1,
+      "id": 107,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -111,72 +105,6 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Total number of prompt tokens processed within the specified time.",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "color": {
-            "mode": "thresholds"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 107,
-      "options": {
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "orientation": "auto",
-        "textMode": "auto",
-        "wideLayout": true,
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "showPercentChange": false,
-        "percentChangeColorMode": "standard"
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum(increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Input Tokens Processed",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
       "description": "Total number of output tokens generated within the specified time.",
       "fieldConfig": {
         "defaults": {
@@ -200,7 +128,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 1
       },
       "id": 108,
       "options": {
@@ -236,6 +164,78 @@
         }
       ],
       "title": "Output Tokens Generated",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Average Latency by Model",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "dtdurations"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "inverted",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": true,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.3.1",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "avg by(model_name) (vllm:e2e_request_latency_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:e2e_request_latency_seconds_count{model_name=~\"$model_name\"})",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{model_name}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Average Request Latency",
       "type": "stat"
     },
     {
@@ -380,7 +380,7 @@
           "useBackend": false
         }
       ],
-      "title": "Input Tokens Processed",
+      "title": "Input Tokens Processed (per model)",
       "type": "bargauge"
     },
     {
@@ -453,7 +453,7 @@
           "useBackend": false
         }
       ],
-      "title": "Output Tokens Generated",
+      "title": "Output Tokens Generated (per model)",
       "type": "bargauge"
     },
     {
