@@ -424,7 +424,7 @@
           "expr": "vllm:num_requests_running{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -520,7 +520,7 @@
           "expr": "vllm:num_requests_waiting{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -616,7 +616,7 @@
           "expr": "increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -712,7 +712,7 @@
           "expr": "increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
