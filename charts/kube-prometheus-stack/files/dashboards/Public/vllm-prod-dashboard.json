@@ -449,8 +449,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": true
+          "fields": ""
         }
       },
       "pluginVersion": "11.3.1",
@@ -508,8 +507,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": true
+          "fields": ""
         }
       },
       "pluginVersion": "11.3.1",
