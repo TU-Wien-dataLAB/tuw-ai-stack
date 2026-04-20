@@ -18,16 +18,15 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 38,
   "links": [],
   "panels": [
     {
       "collapsed": false,
       "gridPos": {
-        "x": 0,
-        "y": 0,
+        "h": 1,
         "w": 24,
-        "h": 1
+        "x": 0,
+        "y": 0
       },
       "id": 100,
       "panels": [],
@@ -51,7 +50,7 @@
             "steps": [
               {
                 "color": "red",
-                "value": null
+                "value": 0
               },
               {
                 "color": "yellow",
@@ -68,28 +67,31 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 1,
+        "h": 11,
         "w": 24,
-        "h": 8
+        "x": 0,
+        "y": 1
       },
       "id": 109,
       "options": {
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "textMode": "auto",
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
-        "showPercentChange": false
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "textMode": "auto"
       },
       "pluginVersion": "12.4.2",
       "targets": [
@@ -117,52 +119,53 @@
       "description": "Total number of prompt tokens processed within the specified time.",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 9,
+        "h": 8,
         "w": 6,
-        "h": 8
+        "x": 0,
+        "y": 12
       },
       "id": 107,
       "options": {
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "orientation": "auto",
-        "textMode": "auto",
-        "wideLayout": true,
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showPercentChange": false,
-        "percentChangeColorMode": "standard"
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
+          "expr": "floor(sum(increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range])))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -183,52 +186,53 @@
       "description": "Total number of output tokens generated within the specified time.",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "locale"
         },
         "overrides": []
       },
       "gridPos": {
-        "x": 6,
-        "y": 9,
+        "h": 8,
         "w": 6,
-        "h": 8
+        "x": 6,
+        "y": 12
       },
       "id": 108,
       "options": {
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "orientation": "auto",
-        "textMode": "auto",
-        "wideLayout": true,
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "showPercentChange": false,
-        "percentChangeColorMode": "standard"
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range]))",
+          "expr": "floor(sum(increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range])))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -240,6 +244,142 @@
       ],
       "title": "Output Tokens Generated",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total number of prompt tokens processed within the specified time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 12
+      },
+      "id": 103,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "all",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(model_name) (increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{model_name}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Input Tokens Processed (per model)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total number of output tokens generated within the specified time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 12
+      },
+      "id": 104,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "all",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(model_name) (increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range]))",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{model_name}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Output Tokens Generated (per model)",
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -276,6 +416,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -291,7 +432,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -304,10 +445,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 17,
+        "h": 7,
         "w": 24,
-        "h": 7
+        "x": 0,
+        "y": 20
       },
       "id": 1,
       "options": {
@@ -318,11 +459,12 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "all",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -356,7 +498,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           }
@@ -364,10 +506,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 24,
+        "h": 7,
         "w": 24,
-        "h": 7
+        "x": 0,
+        "y": 27
       },
       "id": 2,
       "options": {
@@ -394,7 +536,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -413,128 +555,12 @@
       "type": "bargauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Total number of prompt tokens processed within the specified time.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 12,
-        "y": 9,
-        "w": 6,
-        "h": 8
-      },
-      "id": 103,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "all",
-          "sort": "none"
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        }
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(model_name) (increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Input Tokens Processed (per model)",
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Total number of output tokens generated within the specified time.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 18,
-        "y": 9,
-        "w": 6,
-        "h": 8
-      },
-      "id": 104,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "all",
-          "sort": "none"
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        }
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(model_name) (increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range]))",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Output Tokens Generated (per model)",
-      "type": "piechart"
-    },
-    {
       "collapsed": false,
       "gridPos": {
-        "x": 0,
-        "y": 30,
+        "h": 1,
         "w": 24,
-        "h": 1
+        "x": 0,
+        "y": 34
       },
       "id": 102,
       "panels": [],
@@ -575,6 +601,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -590,7 +617,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -602,10 +629,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 31,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 0,
+        "y": 35
       },
       "id": 10,
       "options": {
@@ -616,11 +643,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -671,6 +699,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -686,7 +715,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -698,10 +727,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 12,
-        "y": 31,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 12,
+        "y": 35
       },
       "id": 11,
       "options": {
@@ -712,11 +741,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -767,6 +797,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -782,7 +813,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -794,10 +825,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 39,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 0,
+        "y": 43
       },
       "id": 105,
       "options": {
@@ -808,11 +839,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -863,6 +895,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -878,7 +911,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -890,10 +923,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 12,
-        "y": 39,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 12,
+        "y": 43
       },
       "id": 106,
       "options": {
@@ -904,11 +937,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -960,6 +994,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -975,7 +1010,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -988,10 +1023,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 47,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 0,
+        "y": 51
       },
       "id": 12,
       "options": {
@@ -1002,11 +1037,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1057,6 +1093,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1072,7 +1109,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -1085,10 +1122,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 12,
-        "y": 47,
+        "h": 8,
         "w": 12,
-        "h": 8
+        "x": 12,
+        "y": 51
       },
       "id": 13,
       "options": {
@@ -1099,11 +1136,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1123,10 +1161,10 @@
     {
       "collapsed": false,
       "gridPos": {
-        "x": 0,
-        "y": 54,
+        "h": 1,
         "w": 24,
-        "h": 1
+        "x": 0,
+        "y": 59
       },
       "id": 101,
       "panels": [],
@@ -1168,6 +1206,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1183,7 +1222,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -1196,10 +1235,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 55,
+        "h": 7,
         "w": 12,
-        "h": 7
+        "x": 0,
+        "y": 60
       },
       "id": 3,
       "options": {
@@ -1210,11 +1249,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1247,7 +1287,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -1260,10 +1300,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 12,
-        "y": 55,
+        "h": 7,
         "w": 12,
-        "h": 7
+        "x": 12,
+        "y": 60
       },
       "id": 5,
       "options": {
@@ -1290,7 +1330,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1323,7 +1363,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           }
@@ -1331,10 +1371,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 62,
+        "h": 7,
         "w": 24,
-        "h": 7
+        "x": 0,
+        "y": 67
       },
       "id": 4,
       "options": {
@@ -1361,7 +1401,7 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1413,6 +1453,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1428,7 +1469,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -1441,10 +1482,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 0,
-        "y": 69,
+        "h": 7,
         "w": 12,
-        "h": 7
+        "x": 0,
+        "y": 74
       },
       "id": 6,
       "options": {
@@ -1455,11 +1496,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1512,6 +1554,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1527,7 +1570,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -1540,10 +1583,10 @@
         "overrides": []
       },
       "gridPos": {
-        "x": 12,
-        "y": 69,
+        "h": 7,
         "w": 12,
-        "h": 7
+        "x": 12,
+        "y": 74
       },
       "id": 20,
       "options": {
@@ -1554,11 +1597,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "12.4.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -1579,7 +1623,7 @@
   ],
   "preload": false,
   "refresh": "auto",
-  "schemaVersion": 40,
+  "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": [
@@ -1603,19 +1647,20 @@
         },
         "refresh": 1,
         "regex": "",
+        "regexApplyTo": "value",
         "sort": 1,
         "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "vLLM Dashboard",
   "uid": "750918278",
-  "version": 19,
+  "version": 21,
   "weekStart": ""
 }
