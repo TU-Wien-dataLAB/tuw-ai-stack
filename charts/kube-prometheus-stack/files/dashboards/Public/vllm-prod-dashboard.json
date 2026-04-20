@@ -1047,7 +1047,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "vllm:gpu_cache_usage_perc{model_name=~\"$model_name\"}",
+          "expr": "vllm:kv_cache_usage_perc{model_name=~\"$model_name\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
