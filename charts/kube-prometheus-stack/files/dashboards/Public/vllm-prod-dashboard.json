@@ -473,7 +473,7 @@
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "{{model_name}} - {{pod}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -545,14 +545,13 @@
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{le}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
       "title": "Request latency distribution",
-      "type": "bargauge"
+      "type": "heatmap"
     },
     {
       "collapsed": false,
@@ -1145,8 +1144,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:prefix_cache_hits_total{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:prompt_tokens_total{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:prefix_cache_hits{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:prefix_cache_queries{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -1259,7 +1258,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(model_name, pod) (vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "rate(vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}} - {{pod}}",
@@ -1334,8 +1333,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name, pod) (vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}} - {{pod}}",
@@ -1507,7 +1506,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "expr": "rate(vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
-          "format": "heatmap",
+          "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}} - {{pod}}",
