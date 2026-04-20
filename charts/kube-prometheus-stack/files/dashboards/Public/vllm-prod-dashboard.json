@@ -1259,7 +1259,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(model_name, pod) (vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"})",
+          "expr": "rate(vllm:time_to_first_token_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:time_to_first_token_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}} - {{pod}}",
@@ -1656,13 +1656,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "vLLM Dashboard",
   "uid": "750918278",
-  "version": 25,
+  "version": 28,
   "weekStart": ""
 }
