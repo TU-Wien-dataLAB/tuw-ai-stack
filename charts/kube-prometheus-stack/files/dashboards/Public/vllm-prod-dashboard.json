@@ -386,7 +386,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Average Latency by Model",
+      "description": "Average Request Latency by Model",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -436,7 +436,7 @@
               },
               {
                 "color": "red",
-                "value": 60
+                "value": 80
               }
             ]
           },
@@ -456,11 +456,11 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
-          "mode": "all",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -468,8 +468,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:e2e_request_latency_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:e2e_request_latency_seconds_count{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:e2e_request_latency_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) \n/ \nrate(vllm:e2e_request_latency_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1505,8 +1505,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name, pod) (vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:request_prefill_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:request_prefill_time_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1606,8 +1606,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name, pod) (vllm:inter_token_latency_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:inter_token_latency_seconds_count{model_name=~\"$model_name\"} > 0)",
+          "editorMode": "code",
+          "expr": "rate(vllm:inter_token_latency_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) \n/ \nrate(vllm:inter_token_latency_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1630,7 +1630,9 @@
       {
         "current": {
           "text": "All",
-          "value": "$__all"
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -1661,6 +1663,6 @@
   "timezone": "browser",
   "title": "vLLM Dashboard",
   "uid": "750918278",
-  "version": 21,
+  "version": 25,
   "weekStart": ""
 }
