@@ -162,11 +162,11 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range])",
+          "expr": "sum(increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -228,11 +228,11 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range])",
+          "expr": "sum(increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range]))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{model_name}}",
+          "legendFormat": "",
           "range": true,
           "refId": "A",
           "useBackend": false
