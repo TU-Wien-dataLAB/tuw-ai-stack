@@ -444,35 +444,30 @@
       },
       "id": 103,
       "options": {
-        "displayMode": "gradient",
         "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": false
         },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "auto",
+        "tooltip": {
+          "mode": "all",
+          "sort": "none"
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
+          "values": true
+        }
       },
       "pluginVersion": "11.3.1",
       "targets": [
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range])",
+          "expr": "sum by(model_name) (increase(vllm:prompt_tokens_total{model_name=~\"$model_name\"}[$__range]))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -483,7 +478,7 @@
         }
       ],
       "title": "Input Tokens Processed (per model)",
-      "type": "bargauge"
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -517,35 +512,30 @@
       },
       "id": 104,
       "options": {
-        "displayMode": "gradient",
         "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": false
         },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "auto",
+        "tooltip": {
+          "mode": "all",
+          "sort": "none"
+        },
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
+          "values": true
+        }
       },
       "pluginVersion": "11.3.1",
       "targets": [
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range])",
+          "expr": "sum by(model_name) (increase(vllm:generation_tokens_total{model_name=~\"$model_name\"}[$__range]))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -556,7 +546,7 @@
         }
       ],
       "title": "Output Tokens Generated (per model)",
-      "type": "bargauge"
+      "type": "piechart"
     },
     {
       "collapsed": false,
