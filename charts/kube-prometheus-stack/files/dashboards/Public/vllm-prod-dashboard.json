@@ -68,13 +68,15 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
         "x": 0,
-        "y": 1
+        "y": 1,
+        "w": 24,
+        "h": 8
       },
       "id": 109,
       "options": {
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
         "reduceOptions": {
           "values": false,
           "calcs": [
@@ -82,14 +84,12 @@
           ],
           "fields": ""
         },
-        "orientation": "auto",
         "textMode": "auto",
-        "wideLayout": true,
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "showPercentChange": false,
-        "percentChangeColorMode": "standard"
+        "orientation": "auto",
+        "showPercentChange": false
       },
       "pluginVersion": "12.4.2",
       "targets": [
@@ -107,7 +107,7 @@
         }
       ],
       "title": "Model Uptime",
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -134,10 +134,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 1
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 8
       },
       "id": 107,
       "options": {
@@ -200,10 +200,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 1
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 8
       },
       "id": 108,
       "options": {
