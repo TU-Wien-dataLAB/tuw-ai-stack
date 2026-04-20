@@ -540,8 +540,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(le) (vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "sum by(le) (increase(vllm:e2e_request_latency_seconds_bucket{model_name=~\"$model_name\"}[$__range]))",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1020,7 +1020,32 @@
           },
           "unit": "percentunit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "openai/whisper-large-v3-turbo"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1086,7 +1111,7 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepBefore",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -1145,8 +1170,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name) (vllm:prefix_cache_hits_total{model_name=~\"$model_name\"}) / avg by(model_name) (vllm:prompt_tokens_total{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:prefix_cache_hits_total{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:prefix_cache_queries_total{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -1334,8 +1359,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "avg by(model_name, pod) (vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}) / avg by(model_name, pod) (vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "rate(vllm:request_queue_time_seconds_sum{model_name=~\"$model_name\"}[$__rate_interval]) / rate(vllm:request_queue_time_seconds_count{model_name=~\"$model_name\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}} - {{pod}}",
@@ -1405,8 +1430,8 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(le) (vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"})",
+          "editorMode": "code",
+          "expr": "sum by(le) (increase(vllm:time_to_first_token_seconds_bucket{model_name=~\"$model_name\"}[$__range]))",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1663,6 +1688,6 @@
   "timezone": "browser",
   "title": "vLLM Dashboard",
   "uid": "750918278",
-  "version": 28,
+  "version": 29,
   "weekStart": ""
 }
