@@ -1,19 +1,19 @@
 # syntax=docker/dockerfile:1.6
 #
-# This Dockerfile is used to build the Llama Stack container image.
+# This Dockerfile is used to build the OGX container image for the TU Wien AI distribution.
 # Example:
 # docker build \
-#   -f containers/Containerfile \
-#   --build-arg DISTRO_NAME=starter \
-#   --tag llama-stack:starter .
+#   -f utils/ogx-distribution/Dockerfile \
+#   --build-arg DISTRO_NAME=tuw-ai \
+#   --tag tu-wien-datalab/ogx:tuw-ai .
 
 ARG BASE_IMAGE=python:3.12-slim
 FROM ${BASE_IMAGE}
 
 ARG INSTALL_MODE="pypi"
-ARG LLAMA_STACK_DIR="/workspace"
-ARG LLAMA_STACK_CLIENT_DIR=""
-# LLAMA_STACK_PYPI_VERSION from https://github.com/TU-Wien-dataLAB/tuw-ai-stack/settings/variables/actions
+ARG OGX_DIR="/workspace"
+ARG OGX_CLIENT_DIR=""
+# OGX_PYPI_VERSION from https://github.com/TU-Wien-dataLAB/tuw-ai-stack/settings/variables/actions
 ARG PYPI_VERSION=""
 ARG TEST_PYPI_VERSION=""
 ARG KEEP_WORKSPACE=""
@@ -22,6 +22,7 @@ ARG RUN_CONFIG_PATH=""
 ARG UV_HTTP_TIMEOUT=500
 ARG UV_EXTRA_INDEX_URL=""
 ARG UV_INDEX_STRATEGY=""
+ARG PIP_CONSTRAINT_FILE=""
 ENV UV_HTTP_TIMEOUT=${UV_HTTP_TIMEOUT}
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -52,8 +53,8 @@ RUN pip install --no-cache uv
 ENV UV_SYSTEM_PYTHON=1
 
 ENV INSTALL_MODE=${INSTALL_MODE}
-ENV LLAMA_STACK_DIR=${LLAMA_STACK_DIR}
-ENV LLAMA_STACK_CLIENT_DIR=${LLAMA_STACK_CLIENT_DIR}
+ENV OGX_DIR=${OGX_DIR}
+ENV OGX_CLIENT_DIR=${OGX_CLIENT_DIR}
 ENV PYPI_VERSION=${PYPI_VERSION}
 ENV TEST_PYPI_VERSION=${TEST_PYPI_VERSION}
 ENV KEEP_WORKSPACE=${KEEP_WORKSPACE}
@@ -64,70 +65,82 @@ ENV RUN_CONFIG_PATH=${RUN_CONFIG_PATH}
 COPY . /workspace
 
 # Copy custom tuw-ai distribution to the correct location
-RUN mkdir -p /usr/local/lib/python3.12/site-packages/llama_stack/distributions/tuw-ai
-COPY tuw-ai /usr/local/lib/python3.12/site-packages/llama_stack/distributions/tuw-ai
+RUN mkdir -p /usr/local/lib/python3.12/site-packages/ogx/distributions/tuw-ai
+COPY tuw-ai /usr/local/lib/python3.12/site-packages/ogx/distributions/tuw-ai
 
 # Install the client package if it is provided
-# NOTE: this is installed before llama-stack since llama-stack depends on llama-stack-client-python
+# NOTE: this is installed before ogx since ogx depends on ogx-client-python
 # Unset UV index env vars to ensure we only use PyPI for the client
 RUN set -eux; \
     unset UV_EXTRA_INDEX_URL UV_INDEX_STRATEGY; \
-    if [ -n "$LLAMA_STACK_CLIENT_DIR" ]; then \
-        if [ ! -d "$LLAMA_STACK_CLIENT_DIR" ]; then \
-            echo "LLAMA_STACK_CLIENT_DIR is set but $LLAMA_STACK_CLIENT_DIR does not exist" >&2; \
+    if [ -n "$OGX_CLIENT_DIR" ]; then \
+        if [ ! -d "$OGX_CLIENT_DIR" ]; then \
+            echo "OGX_CLIENT_DIR is set but $OGX_CLIENT_DIR does not exist" >&2; \
             exit 1; \
         fi; \
-        uv pip install --no-cache -e "$LLAMA_STACK_CLIENT_DIR"; \
+        uv pip install --no-cache -e "$OGX_CLIENT_DIR"; \
     fi;
 
-# Install llama-stack
+# Install ogx
 # Use UV_EXTRA_INDEX_URL inline only for editable install with RC dependencies
 RUN set -eux; \
     SAVED_UV_EXTRA_INDEX_URL="${UV_EXTRA_INDEX_URL:-}"; \
     SAVED_UV_INDEX_STRATEGY="${UV_INDEX_STRATEGY:-}"; \
     unset UV_EXTRA_INDEX_URL UV_INDEX_STRATEGY; \
     if [ "$INSTALL_MODE" = "editable" ]; then \
-        if [ ! -d "$LLAMA_STACK_DIR" ]; then \
-            echo "INSTALL_MODE=editable requires LLAMA_STACK_DIR to point to a directory inside the build context" >&2; \
+        if [ ! -d "$OGX_DIR" ]; then \
+            echo "INSTALL_MODE=editable requires OGX_DIR to point to a directory inside the build context" >&2; \
             exit 1; \
         fi; \
         if [ -n "$SAVED_UV_EXTRA_INDEX_URL" ] && [ -n "$SAVED_UV_INDEX_STRATEGY" ]; then \
             UV_EXTRA_INDEX_URL="$SAVED_UV_EXTRA_INDEX_URL" UV_INDEX_STRATEGY="$SAVED_UV_INDEX_STRATEGY" \
-                uv pip install --no-cache -e "$LLAMA_STACK_DIR"; \
+                uv pip install --no-cache -e "$OGX_DIR"; \
         else \
-            uv pip install --no-cache -e "$LLAMA_STACK_DIR"; \
+            uv pip install --no-cache -e "$OGX_DIR"; \
         fi; \
     elif [ "$INSTALL_MODE" = "test-pypi" ]; then \
         uv pip install --no-cache fastapi libcst; \
         if [ -n "$TEST_PYPI_VERSION" ]; then \
-            uv pip install --no-cache --extra-index-url https://test.pypi.org/simple/ --index-strategy unsafe-best-match "llama-stack==$TEST_PYPI_VERSION"; \
+            uv pip install --no-cache --extra-index-url https://test.pypi.org/simple/ --index-strategy unsafe-best-match "ogx==$TEST_PYPI_VERSION"; \
         else \
-            uv pip install --no-cache --extra-index-url https://test.pypi.org/simple/ --index-strategy unsafe-best-match llama-stack; \
+            uv pip install --no-cache --extra-index-url https://test.pypi.org/simple/ --index-strategy unsafe-best-match ogx; \
         fi; \
     else \
         if [ -n "$PYPI_VERSION" ]; then \
-            uv pip install --no-cache "llama-stack==$PYPI_VERSION"; \
+            uv pip install --no-cache "ogx==$PYPI_VERSION"; \
         else \
-            uv pip install --no-cache "llama-stack"; \
+            uv pip install --no-cache ogx; \
         fi; \
     fi;
-
-# Pin setuptools to <82.0.0 to keep pkg_resources for milvus-lite compatibility
-RUN unset UV_EXTRA_INDEX_URL UV_INDEX_STRATEGY && \
-    uv pip install --no-cache "setuptools<82.0.0"
 
 # Install the dependencies for the distribution
 # Explicitly unset UV index env vars to ensure we only use PyPI for distribution deps
 RUN set -eux; \
     unset UV_EXTRA_INDEX_URL UV_INDEX_STRATEGY; \
+    if [ -n "$PIP_CONSTRAINT_FILE" ] && [ -f "$PIP_CONSTRAINT_FILE" ]; then \
+        export UV_CONSTRAINT="$PIP_CONSTRAINT_FILE"; \
+    fi; \
     if [ -z "$DISTRO_NAME" ]; then \
         echo "DISTRO_NAME must be provided" >&2; \
         exit 1; \
     fi; \
-    deps="$(llama stack list-deps "$DISTRO_NAME")"; \
+    deps="$(ogx stack list-deps "$DISTRO_NAME")"; \
     if [ -n "$deps" ]; then \
         printf '%s\n' "$deps" | xargs -L1 uv pip install --no-cache; \
     fi
+
+# Install OpenTelemetry auto-instrumentation support
+RUN set -eux; \
+    pip install --no-cache opentelemetry-distro opentelemetry-exporter-otlp; \
+    opentelemetry-bootstrap -a install
+
+# Pre-cache tiktoken cl100k_base encoding at build time so the server never
+# attempts a runtime download to openaipublic.blob.core.windows.net.
+# This is required for air-gapped / disconnected-cluster deployments.
+ENV TIKTOKEN_CACHE_DIR="/.cache/tiktoken"
+RUN pip install --no-cache tiktoken && \
+    mkdir -p /.cache/tiktoken && \
+    python -c "import tiktoken; tiktoken.get_encoding('cl100k_base')"
 
 # Cleanup
 RUN set -eux; \
@@ -140,23 +153,31 @@ RUN set -eux; \
     esac; \
     if [ "$should_remove" -eq 1 ] && [ -d /workspace ]; then rm -rf /workspace; fi
 
-RUN cat <<'EOF' >/usr/local/bin/llama-stack-entrypoint.sh
+RUN cat <<'EOF' >/usr/local/bin/ogx-entrypoint.sh
 #!/bin/sh
 set -e
 
+# Enable OpenTelemetry auto-instrumentation if any OTEL_* variable is set
+CMD_PREFIX=""
+if env | grep -q '^OTEL_'; then
+  CMD_PREFIX="opentelemetry-instrument"
+  # Disable low-level DB driver instrumentation to prevent duplicate spans
+  # when SQLAlchemy ORM instrumentation is also active (known OTel issue).
+  export OTEL_PYTHON_DISABLED_INSTRUMENTATIONS="${OTEL_PYTHON_DISABLED_INSTRUMENTATIONS:+$OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,}asyncpg,sqlite3"
+fi
+
 if [ -n "$RUN_CONFIG_PATH" ] && [ -f "$RUN_CONFIG_PATH" ]; then
-  exec llama stack run "$RUN_CONFIG_PATH" "$@"
+  exec $CMD_PREFIX ogx stack run "$RUN_CONFIG_PATH" "$@"
 fi
 
 if [ -n "$DISTRO_NAME" ]; then
-  exec llama stack run "$DISTRO_NAME" "$@"
+  exec $CMD_PREFIX ogx stack run "$DISTRO_NAME" "$@"
 fi
 
-exec llama stack run "$@"
+exec $CMD_PREFIX ogx stack run "$@"
 EOF
-RUN chmod +x /usr/local/bin/llama-stack-entrypoint.sh
+RUN chmod +x /usr/local/bin/ogx-entrypoint.sh
 
-RUN mkdir -p /.llama /.cache /home/lls/.cache/milvus && chmod -R g+rw /app /.llama /.cache && chmod -R a+rwx /home/lls/.cache/milvus
+RUN mkdir -p /.ogx /.cache && chmod -R g+rw /app /.ogx /.cache
 
-ENTRYPOINT ["/usr/local/bin/llama-stack-entrypoint.sh"]
-
+ENTRYPOINT ["/usr/local/bin/ogx-entrypoint.sh"]

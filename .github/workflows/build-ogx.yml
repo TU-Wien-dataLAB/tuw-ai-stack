@@ -1,4 +1,4 @@
-name: Build and Push Llama Stack Docker Image
+name: Build and Push OGX Docker Image
 
 on:
   workflow_dispatch:
@@ -7,11 +7,11 @@ on:
       - main
       - develop
     paths:
-      - 'utils/llama-stack-distribution/**'
+      - 'utils/ogx-distribution/**'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: tu-wien-datalab/llama-stack
+  IMAGE_NAME: tu-wien-datalab/ogx
 
 jobs:
   build-and-push-image:
@@ -52,15 +52,15 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           provenance: false
-          context: utils/llama-stack-distribution
-          file: utils/llama-stack-distribution/Dockerfile
+          context: utils/ogx-distribution
+          file: utils/ogx-distribution/Dockerfile
           build-args: |
             DISTRO_NAME=tuw-ai
-            PYPI_VERSION=${{vars.LLAMA_STACK_PYPI_VERSION || '0.4.0' }}
+            PYPI_VERSION=${{vars.OGX_PYPI_VERSION || '1.0.0' }}
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ vars.LLAMA_STACK_PYPI_VERSION || '0.4.0' }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ vars.OGX_PYPI_VERSION || '1.0.0' }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
