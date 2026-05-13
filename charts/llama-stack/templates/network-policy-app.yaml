@@ -10,7 +10,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: llama-stack
+      app.kubernetes.io/name: {{ include "llama-stack.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   policyTypes:
     - Egress

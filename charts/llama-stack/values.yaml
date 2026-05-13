@@ -1,4 +1,4 @@
-# Note: The starter distribution uses built-in configuration
+# Note: The OGX distribution uses built-in configuration
 # All providers are configured via environment variables below
 
 # APIs to enable
@@ -7,8 +7,9 @@ apis:
   - file_processors
   - files
   - inference
+  - interactions
+  - messages
   - responses
-  - safety
   - tool_runtime
   - vector_io
 
@@ -35,7 +36,7 @@ env:
 replicaCount: 1
 
 image:
-  repository: ghcr.io/tu-wien-datalab/llama-stack
+  repository: ghcr.io/tu-wien-datalab/ogx
   tag: main
   pullPolicy: Always
 
@@ -59,13 +60,13 @@ podSecurityContext:
 networkPolicy:
   enabled: true
   # List of namespaces to allow communication with
-  # Note: Add the namespace where llama-stack is deployed (e.g., llama-stack-staging)
+  # Note: Add the namespace where OGX is deployed (e.g., ogx-staging)
   # to allow communication with qdrant sub-chart
   allowedNamespaces: []
   # Example:
   # - open-webui
   # - vllm
-  # - llama-stack-staging
+  # - ogx-staging
 
 service:
   type: ClusterIP
@@ -85,7 +86,7 @@ persistence:
   accessModes:
     - ReadWriteOnce
   size: 20Gi
-  mountPath: "/home/lls/.llama"
+  mountPath: "/home/lls/.ogx"
 
 # Additional volumes on the output Deployment definition.
 volumes: []
@@ -141,7 +142,7 @@ startupProbe:
   failureThreshold: 30
 
 
-# Llama Stack Configuration
+# OGX Configuration
 # The configuration is split into modular sections that are combined in the ConfigMap
 # This allows updating specific sections (e.g., only registered_resources) between deployments
 
@@ -154,13 +155,21 @@ providers:
         base_url: ${env.VLLM_URL:=}
         max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
         api_token: ${env.VLLM_API_TOKEN:=fake}
-        tls_verify: ${env.VLLM_TLS_VERIFY:=true}
+        network:
+          tls:
+            verify: ${env.VLLM_TLS_VERIFY:=true}
         # Don't set allowed_models - let it discover all models from endpoint
     - provider_id: openai
       provider_type: remote::openai
       config:
         api_key: ${env.OPENAI_API_KEY:=}
         base_url: ${env.OPENAI_BASE_URL:=https://api.openai.com/v1}
+    - provider_id: sentence-transformers
+      provider_type: inline::sentence-transformers
+      config:
+        trust_remote_code: false
+    - provider_id: transformers
+      provider_type: inline::transformers
   vector_io:
     - provider_id: faiss
       provider_type: inline::faiss
@@ -171,41 +180,40 @@ providers:
     - provider_id: sqlite-vec
       provider_type: inline::sqlite-vec
       config:
-        db_path: ${env.SQLITE_STORE_DIR:=~/.llama/distributions/starter}/sqlite_vec.db
+        db_path: ${env.SQLITE_STORE_DIR:=~/.ogx/distributions/tuw-ai}/sqlite_vec.db
         persistence:
           namespace: vector_io::sqlite_vec
           backend: kv_default
     - provider_id: ${env.QDRANT_URL:+qdrant}
       provider_type: remote::qdrant
       config:
-        url: ${env.QDRANT_URL:=}
         api_key: ${env.QDRANT_API_KEY:=}
         persistence:
           namespace: vector_io::qdrant_remote
           backend: kv_default
   files:
-    - provider_id: meta-reference-files
+    - provider_id: builtin-files
       provider_type: inline::localfs
       config:
-        storage_dir: ${env.FILES_STORAGE_DIR:=~/.llama/distributions/starter/files}
+        storage_dir: ${env.FILES_STORAGE_DIR:=~/.ogx/distributions/tuw-ai/files}
         metadata_store:
           table_name: files_metadata
           backend: sql_default
-  safety:
-    - provider_id: llama-guard
-      provider_type: inline::llama-guard
+  interactions:
+    - provider_id: builtin
+      provider_type: inline::builtin
       config:
-        excluded_categories: []
-    - provider_id: code-scanner
-      provider_type: inline::code-scanner
+        store:
+          table_name: interactions
+          backend: sql_default
+  messages:
+    - provider_id: builtin
+      provider_type: inline::builtin
   responses:
     - provider_id: builtin
       provider_type: inline::builtin
       config:
         persistence:
-          agent_state:
-            namespace: agents
-            backend: kv_default
           responses:
             table_name: responses
             backend: sql_default
@@ -217,6 +225,11 @@ providers:
       config:
         api_key: ${env.BRAVE_SEARCH_API_KEY:=}
         max_results: 5
+    - provider_id: tavily-search
+      provider_type: remote::tavily-search
+      config:
+        api_key: ${env.TAVILY_SEARCH_API_KEY:=}
+        max_results: 3
     - provider_id: file-search
       provider_type: inline::file-search
     - provider_id: model-context-protocol
@@ -225,14 +238,12 @@ providers:
     - provider_id: reference
       provider_type: inline::reference
       config:
-        kvstore:
-          namespace: batches
-          backend: kv_default
-        max_concurrent_batches: 1
-        max_concurrent_requests_per_batch: 10
+        sqlstore:
+          table_name: batches
+          backend: sql_default
   file_processors:
-    - provider_id: pypdf
-      provider_type: inline::pypdf
+    - provider_id: auto
+      provider_type: inline::auto
 
 # CloudNativePG cluster configuration
 # Only used when storage.backends contains kv_postgres or sql_postgres types
@@ -260,10 +271,10 @@ storage:
   backends:
     kv_default:
       type: kv_sqlite
-      db_path: ${env.SQLITE_STORE_DIR:=~/.llama/distributions/starter}/kvstore.db
+      db_path: ${env.SQLITE_STORE_DIR:=~/.ogx/distributions/tuw-ai}/kvstore.db
     sql_default:
       type: sql_sqlite
-      db_path: ${env.SQLITE_STORE_DIR:=~/.llama/distributions/starter}/sql_store.db
+      db_path: ${env.SQLITE_STORE_DIR:=~/.ogx/distributions/tuw-ai}/sql_store.db
   stores:
     metadata:
       namespace: registry
@@ -277,13 +288,13 @@ storage:
       table_name: openai_conversations
       backend: sql_default
     prompts:
-      namespace: prompts
-      backend: kv_default
+      table_name: prompts
+      backend: sql_default
     connectors:
-      namespace: connectors
-      backend: kv_default
+      table_name: connectors
+      backend: sql_default
 
-# Registered resources (models, shields, vector DBs, etc.)
+# Registered resources (models, vector DBs, etc.)
 registeredResources:
   models:
     - model_id: nomic-ai/nomic-embed-text-v1.5
@@ -292,22 +303,22 @@ registeredResources:
       model_type: embedding
       metadata:
         embedding_dimension: 768
-  shields:
-    - shield_id: llama-guard
-      provider_id: ${env.SAFETY_MODEL:+llama-guard}
-      provider_shield_id: ${env.SAFETY_MODEL:=}
-    - shield_id: code-scanner
-      provider_id: ${env.CODE_SCANNER_MODEL:+code-scanner}
-      provider_shield_id: ${env.CODE_SCANNER_MODEL:=}
+    - metadata: {}
+      model_id: claude-haiku-4-5-20251001
+      provider_id: all
+      provider_model_id: auto
+      model_type: llm
+    - metadata: {}
+      model_id: claude-sonnet-4-5-20250514
+      provider_id: all
+      provider_model_id: auto
+      model_type: llm
+    - metadata: {}
+      model_id: claude-opus-4-6-20260314
+      provider_id: all
+      provider_model_id: auto
+      model_type: llm
   vector_dbs: []
-  datasets: []
-  scoring_fns: []
-  benchmarks: []
-  tool_groups:
-    - toolgroup_id: builtin::websearch
-      provider_id: brave-search
-    - toolgroup_id: builtin::rag
-      provider_id: file-search
 
 # Server configuration
 server:
@@ -321,10 +332,9 @@ vectorStores:
   default_embedding_model:
     provider_id: sentence-transformers
     model_id: nomic-ai/nomic-embed-text-v1.5
-
-# Safety configuration
-safety:
-  default_shield_id: llama-guard
+  default_reranker_model:
+    provider_id: transformers
+    model_id: Qwen/Qwen3-Reranker-0.6B
 
 # Qdrant configuration (sub-chart)
 qdrant:

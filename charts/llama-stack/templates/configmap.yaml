@@ -7,7 +7,7 @@ metadata:
 data:
   config.yaml: |
     version: 2
-    image_name: tuw-ai
+    distro_name: tuw-ai
     {{- with .Values.apis }}
     apis:
       {{- toYaml . | nindent 6 }}
@@ -30,9 +30,5 @@ data:
     {{- end }}
     {{- with .Values.vectorStores }}
     vector_stores:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-    {{- with .Values.safety }}
-    safety:
       {{- toYaml . | nindent 6 }}
     {{- end }}

@@ -55,14 +55,14 @@ spec:
             - sh
             - -c
             - |
-              echo "Setting up Llama Stack data directory..."
+              echo "Setting up OGX data directory..."
               BASE_DIR="{{ .Values.persistence.mountPath }}"
               # Clean up any existing Milvus lock files
-              rm -f $BASE_DIR/distributions/starter/milvus.db/milvus.db.lock
-              rm -f $BASE_DIR/distributions/starter/milvus.db/*.lock
+              rm -f $BASE_DIR/distributions/tuw-ai/milvus.db/milvus.db.lock
+              rm -f $BASE_DIR/distributions/tuw-ai/milvus.db/*.lock
               # Create directory structure
-              mkdir -p $BASE_DIR/distributions/starter/files
-              mkdir -p $BASE_DIR/distributions/starter/milvus.db
+              mkdir -p $BASE_DIR/distributions/tuw-ai/files
+              mkdir -p $BASE_DIR/distributions/tuw-ai/milvus.db
               chown -R 1000:1000 $BASE_DIR || echo "Some files couldn't be chowned (expected)"
               echo "Directory structure created successfully"
           volumeMounts:
@@ -84,7 +84,7 @@ spec:
             - "{{ .Values.service.port }}"
           env:
             - name: RUN_CONFIG_PATH
-              value: "/etc/llama-stack/config.yaml"
+              value: "/etc/ogx/config.yaml"
             - name: QDRANT_URL
               value: "http://{{ .Release.Name }}-qdrant.{{ .Release.Namespace }}.svc.cluster.local:6333"
           {{- if .Values.env }}
@@ -92,7 +92,7 @@ spec:
           {{- end }}
           {{- if .Values.persistence.enabled }}
             - name: SQLITE_STORE_DIR
-              value: "/home/lls/.llama/distributions/starter"
+              value: "/home/lls/.ogx/distributions/tuw-ai"
             - name: HOME
               value: "/home/lls"
           {{- end }}
@@ -114,7 +114,7 @@ spec:
                   name: {{ include "llama-stack.fullname" . }}-postgres-app
                   key: password
           {{- end }}
-            - name: LLAMA_STACK_PORT
+            - name: OGX_PORT
               value: {{ .Values.service.port | quote }}
           {{- if .Values.telemetry.enabled }}
             - name: TELEMETRY_SINKS
@@ -132,7 +132,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: config-volume
-              mountPath: /etc/llama-stack
+              mountPath: /etc/ogx
               readOnly: true
             {{- if .Values.persistence.enabled }}
             - name: data-volume
