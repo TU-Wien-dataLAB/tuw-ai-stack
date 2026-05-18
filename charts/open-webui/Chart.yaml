@@ -25,5 +25,5 @@ appVersion: "0.8.2"
 
 dependencies:
   - name: open-webui
-    version: 12.2.0
+    version: 14.5.0
     repository: https://helm.openwebui.com/
