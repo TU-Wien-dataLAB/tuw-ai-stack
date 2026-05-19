@@ -10,7 +10,7 @@ What is being deployed?
 - **inference-extension-crds** - Inference Extension CRDs for intelligent LLM routing (helm chart from [https://github.com/kubernetes-sigs/gateway-api-inference-extension.git](https://github.com/kubernetes-sigs/gateway-api-inference-extension.git))
 - **inferencepool** (per model) - Inference scheduling extension with intelligent request routing (helm chart from [registry.k8s.io/gateway-api-inference-extension/charts](https://github.com/kubernetes-sigs/gateway-api-inference-extension))
 - **kube-prometheus-stack** - monitoring and observability stack with Prometheus, Grafana, and AlertManager
-- **llama-stack** - unified OpenAI-compatible API layer
+- **llama-stack** (project renamed to **OGX**) - unified OpenAI-compatible API layer
 - **llm-d-infra** - LLM-D gateway infrastructure with Istio integration (helm chart from [https://llm-d-incubation.github.io/llm-d-infra/](https://llm-d-incubation.github.io/llm-d-infra/))
 - **llm-d-modelservice** (per model) - vLLM-based model deployment service (helm chart from [https://github.com/TU-Wien-dataLAB/llm-d-modelservice](https://github.com/TU-Wien-dataLAB/llm-d-modelservice))
 - **loki** - log aggregation system with Alloy
