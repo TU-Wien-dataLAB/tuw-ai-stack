@@ -1,3 +1,7 @@
+# SSO / OIDC configuration
+sso:
+  vaultSecretKey: open-webui-sso-client-secret
+
 # CloudNativePG cluster for PostgreSQL database
 cnpg:
   enabled: false
