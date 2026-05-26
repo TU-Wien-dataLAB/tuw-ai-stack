@@ -1,3 +1,21 @@
+# CloudNativePG cluster for PostgreSQL database
+cnpg:
+  enabled: false
+  instances: 1
+  image: ghcr.io/cloudnative-pg/postgresql:17.2
+  database: openwebui
+  owner: openwebui
+  storage:
+    size: 10Gi
+    # storageClass: ""
+  resources:
+    limits:
+      cpu: '2'
+      memory: 4Gi
+    requests:
+      cpu: '1'
+      memory: 2Gi
+
 persistence:
   subPath: ""
   # -- If using multiple replicas, you must update accessModes to ReadWriteMany
