@@ -187,6 +187,7 @@ providers:
     - provider_id: ${env.QDRANT_URL:+qdrant}
       provider_type: remote::qdrant
       config:
+        url: ${env.QDRANT_URL:=}
         api_key: ${env.QDRANT_API_KEY:=}
         persistence:
           namespace: vector_io::qdrant_remote
