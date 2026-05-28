@@ -6,12 +6,13 @@
 {{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ end -}}
 {{- $alertname := .CommonLabels.alertname -}}
 {{- $namespace := .CommonLabels.namespace -}}
+{{- $summary := .CommonAnnotations.summary -}}
 {{- $description := .CommonAnnotations.description -}}
 {{- $runbookURL := .CommonAnnotations.runbook_url -}}
-{{- $externalURL := .ExternalURL -}}
 {{- $alerts := .Alerts -}}
 {{- $alertCount := len $alerts -}}
 <h3>{{ $emoji }} {{ $alertname }}</h3>
+<p><b>{{ $summary }}</b></p>
 <p>
 <b>Alert Count:</b> {{ $alertCount }}<br>
 <b>Namespace:</b> {{ $namespace }}<br>
@@ -19,7 +20,6 @@
 {{- if $runbookURL }}
 <b>Runbook:</b> <a href="{{ $runbookURL }}">View Runbook</a><br>
 {{- end }}
-<b>Alertmanager:</b> <a href="{{ $externalURL }}">View Alerts</a>
 </p>
 {{- if gt $alertCount 1 }}
 <p><b>Individual Alerts:</b></p>
