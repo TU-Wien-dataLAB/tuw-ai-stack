@@ -2,8 +2,9 @@
 {{- $status := .Status -}}
 {{- $severity := .CommonLabels.severity -}}
 {{- $emoji := "⚠️" -}}
+{{- $resolved := "" -}}
 {{- if eq $severity "critical" }}{{ $emoji = "🚨" }}{{ end -}}
-{{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ end -}}
+{{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ $resolved = " (resolved)" }}{{ end -}}
 {{- $alertname := .CommonLabels.alertname -}}
 {{- $namespace := .CommonLabels.namespace -}}
 {{- $summary := .CommonAnnotations.summary -}}
@@ -11,7 +12,7 @@
 {{- $runbookURL := .CommonAnnotations.runbook_url -}}
 {{- $alerts := .Alerts -}}
 {{- $alertCount := len $alerts -}}
-<h3>{{ $emoji }} {{ $alertname }}</h3>
+<h3>{{ $emoji }} {{ $alertname }}{{ $resolved }}</h3>
 <p><b>{{ $summary }}</b></p>
 <p>
 <b>Alert Count:</b> {{ $alertCount }}<br>
