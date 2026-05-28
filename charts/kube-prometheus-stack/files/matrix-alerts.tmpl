@@ -10,7 +10,7 @@
 {{- $externalURL := .ExternalURL -}}
 {{- $alerts := .Alerts -}}
 {{- $alertCount := len $alerts -}}
-<h3>{{ $emoji }} {{ $status | upper }}: {{ $alertname }}</h3>
+<h3>{{ $emoji }} {{ $status | toUpper }}: {{ $alertname }}</h3>
 <p>
 <b>Alert Count:</b> {{ $alertCount }}<br>
 <b>Severity:</b> {{ $severity }}<br>
