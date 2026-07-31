@@ -121,6 +121,12 @@ spec:
               value: {{ .Values.telemetry.sinks | quote }}
             - name: OTEL_SERVICE_NAME
               value: {{ .Values.telemetry.serviceName | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.telemetry.otlpEndpoint | quote }}
+            - name: OTEL_METRICS_EXPORTER
+              value: {{ .Values.telemetry.metricsExporter | default "otlp" | quote }}
+            - name: OTEL_TRACES_EXPORTER
+              value: {{ .Values.telemetry.tracesExporter | default "otlp" | quote }}
           {{- end }}
           livenessProbe:
             {{- tpl (toYaml .Values.livenessProbe) $ | nindent 12 }}
