@@ -123,6 +123,8 @@ spec:
               value: {{ .Values.telemetry.serviceName | quote }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.telemetry.otlpEndpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: {{ .Values.telemetry.otlpProtocol | default "http/protobuf" | quote }}
             - name: OTEL_METRICS_EXPORTER
               value: {{ .Values.telemetry.metricsExporter | default "otlp" | quote }}
             - name: OTEL_TRACES_EXPORTER

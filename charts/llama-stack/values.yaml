@@ -17,7 +17,8 @@ apis:
 telemetry:
   enabled: false
   serviceName: "ogx-server"
-  otlpEndpoint: "http://otel-collector.telemetry.svc.cluster.local:4318"
+  otlpEndpoint: "http://otel-collector-opentelemetry-collector.telemetry.svc.cluster.local:4318"
+  otlpProtocol: "http/protobuf"
   metricsExporter: "otlp"
   tracesExporter: "otlp"
   sinks: "console,sqlite,otel"
