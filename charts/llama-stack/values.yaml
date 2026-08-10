@@ -55,6 +55,12 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
+# Require all replicas in this release to run on the same node.
+# Enabled by default so replicas can share the ReadWriteOnce PVC.
+# A non-empty affinity value overrides this setting entirely.
+forceSameNode: true
+affinity: {}
+
 podSecurityContext:
   fsGroup: 1000
   runAsUser: 1000
@@ -181,6 +187,9 @@ providers:
         persistence:
           namespace: vector_io::faiss
           backend: kv_default
+        metadata_store:
+          backend: sql_default
+          table_name: vector_stores_metadata
     - provider_id: sqlite-vec
       provider_type: inline::sqlite-vec
       config:
@@ -188,6 +197,9 @@ providers:
         persistence:
           namespace: vector_io::sqlite_vec
           backend: kv_default
+        metadata_store:
+          backend: sql_default
+          table_name: vector_stores_metadata
     - provider_id: ${env.QDRANT_URL:+qdrant}
       provider_type: remote::qdrant
       config:
@@ -196,6 +208,9 @@ providers:
         persistence:
           namespace: vector_io::qdrant_remote
           backend: kv_default
+        metadata_store:
+          backend: sql_default
+          table_name: vector_stores_metadata
   files:
     - provider_id: builtin-files
       provider_type: inline::localfs
