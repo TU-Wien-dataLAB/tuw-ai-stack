@@ -191,12 +191,18 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             Provider(
                 provider_id="faiss",
                 provider_type="inline::faiss",
-                config=FaissVectorIOConfig.sample_run_config(f"~/.ogx/distributions/{name}"),
+                config={
+                    **FaissVectorIOConfig.sample_run_config(f"~/.ogx/distributions/{name}"),
+                    "metadata_store": {"backend": "sql_default", "table_name": "vector_stores_metadata"},
+                },
             ),
             Provider(
                 provider_id="sqlite-vec",
                 provider_type="inline::sqlite-vec",
-                config=SQLiteVectorIOConfig.sample_run_config(f"~/.ogx/distributions/{name}"),
+                config={
+                    **SQLiteVectorIOConfig.sample_run_config(f"~/.ogx/distributions/{name}"),
+                    "metadata_store": {"backend": "sql_default", "table_name": "vector_stores_metadata"},
+                },
             ),
             Provider(
                 provider_id="${env.MILVUS_URL:+milvus}",
@@ -224,10 +230,13 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             Provider(
                 provider_id="${env.QDRANT_URL:+qdrant}",
                 provider_type="remote::qdrant",
-                config=QdrantVectorIOConfig.sample_run_config(
-                    f"~/.ogx/distributions/{name}",
-                    url="${env.QDRANT_URL:=}",
-                ),
+                config={
+                    **QdrantVectorIOConfig.sample_run_config(
+                        f"~/.ogx/distributions/{name}",
+                        url="${env.QDRANT_URL:=}",
+                    ),
+                    "metadata_store": {"backend": "sql_default", "table_name": "vector_stores_metadata"},
+                },
             ),
             Provider(
                 provider_id="${env.WEAVIATE_CLUSTER_URL:+weaviate}",

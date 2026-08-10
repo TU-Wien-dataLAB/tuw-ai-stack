@@ -104,6 +104,9 @@ providers:
       persistence:
         namespace: vector_io::faiss
         backend: kv_default
+      metadata_store:
+        backend: sql_default
+        table_name: vector_stores_metadata
   - provider_id: sqlite-vec
     provider_type: inline::sqlite-vec
     config:
@@ -111,6 +114,9 @@ providers:
       persistence:
         namespace: vector_io::sqlite_vec
         backend: kv_default
+      metadata_store:
+        backend: sql_default
+        table_name: vector_stores_metadata
   - provider_id: ${env.MILVUS_URL:+milvus}
     provider_type: inline::milvus
     config:
@@ -149,6 +155,9 @@ providers:
       persistence:
         namespace: vector_io::qdrant_remote
         backend: kv_default
+      metadata_store:
+        backend: sql_default
+        table_name: vector_stores_metadata
   - provider_id: ${env.WEAVIATE_CLUSTER_URL:+weaviate}
     provider_type: remote::weaviate
     config:
