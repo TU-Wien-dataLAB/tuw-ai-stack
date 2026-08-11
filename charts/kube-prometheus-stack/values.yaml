@@ -30,6 +30,17 @@ kube-prometheus-stack:
   alertmanager:
     enabled: true
 
+    ## SMTP credentials for email alerting (severe/critical alerts only).
+    ## When enabled, the chart creates an ExternalSecret 'alertmanager-smtp' that pulls the
+    ## SMTP password from Vault (ClusterSecretStore 'datalab-vault', key 'alertmanager-smtp-password',
+    ## property 'smtp_password') into a Kubernetes Secret that Alertmanager mounts at
+    ## /etc/alertmanager/secrets/alertmanager-smtp/smtp_password. See templates/smtp-secret.yaml.
+    smtp:
+      enabled: false
+      secretName: alertmanager-smtp
+      vaultKey: alertmanager-smtp-password
+      vaultProperty: smtp_password
+
   grafana:
     additionalDataSources:
       - name: Loki

@@ -31,3 +31,61 @@
 </ul>
 {{- end }}
 {{- end -}}
+{{- define "email.subject" -}}
+{{- $status := .Status -}}
+{{- $severity := .CommonLabels.severity -}}
+{{- $emoji := "⚠️" -}}
+{{- if eq $severity "critical" }}{{ $emoji = "🚨" }}{{ end -}}
+{{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ end -}}
+[{{ $emoji }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.namespace }}) — {{ if eq $status "resolved" }}resolved{{ else }}firing{{ end }}
+{{- end -}}
+
+{{- define "email.html" -}}
+{{- $status := .Status -}}
+{{- $severity := .CommonLabels.severity -}}
+{{- $emoji := "⚠️" -}}
+{{- $resolved := "" -}}
+{{- if eq $severity "critical" }}{{ $emoji = "🚨" }}{{ end -}}
+{{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ $resolved = " (resolved)" }}{{ end -}}
+{{- $alertname := .CommonLabels.alertname -}}
+{{- $namespace := .CommonLabels.namespace -}}
+{{- $summary := .CommonAnnotations.summary -}}
+{{- $description := .CommonAnnotations.description -}}
+{{- $runbookURL := .CommonAnnotations.runbook_url -}}
+{{- $alerts := .Alerts -}}
+{{- $alertCount := len $alerts -}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ $alertname }}{{ $resolved }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif;color:#18181b;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px;">
+<tr><td style="background:#ffffff;border:1px solid #e4e4e7;border-radius:8px;padding:24px;max-width:640px;">
+<h2 style="margin:0 0 8px;">{{ $emoji }} {{ $alertname }}{{ $resolved }}</h2>
+<p style="margin:0 0 16px;font-size:15px;"><b>{{ $summary }}</b></p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+<tr><td style="padding:4px 12px 4px 0;color:#71717a;">Alert Count</td><td style="padding:4px 0;"><b>{{ $alertCount }}</b></td></tr>
+<tr><td style="padding:4px 12px 4px 0;color:#71717a;">Namespace</td><td style="padding:4px 0;"><b>{{ $namespace }}</b></td></tr>
+<tr><td style="padding:4px 12px 4px 0;color:#71717a;">Severity</td><td style="padding:4px 0;"><b>{{ $severity }}</b></td></tr>
+{{- if $description }}
+<tr><td style="padding:4px 12px 4px 0;color:#71717a;vertical-align:top;">Description</td><td style="padding:4px 0;">{{ $description }}</td></tr>
+{{- end }}
+{{- if $runbookURL }}
+<tr><td style="padding:4px 12px 4px 0;color:#71717a;">Runbook</td><td style="padding:4px 0;"><a href="{{ $runbookURL }}" style="color:#2563eb;">View Runbook</a></td></tr>
+{{- end }}
+</table>
+{{- if gt $alertCount 1 }}
+<h3 style="margin:20px 0 8px;">Individual Alerts</h3>
+<ul style="margin:0;padding-left:20px;font-size:14px;">
+{{- range $alerts }}
+<li>{{ .Labels.instance }} — {{ .Annotations.summary }}</li>
+{{- end }}
+</ul>
+{{- end }}
+</td></tr>
+</table>
+</body>
+</html>
+{{- end -}}
