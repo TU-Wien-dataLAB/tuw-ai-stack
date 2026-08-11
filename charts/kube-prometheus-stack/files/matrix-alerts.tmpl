@@ -37,7 +37,7 @@
 {{- $emoji := "⚠️" -}}
 {{- if eq $severity "critical" }}{{ $emoji = "🚨" }}{{ end -}}
 {{- if eq $status "resolved" }}{{ $emoji = "✅" }}{{ end -}}
-[{{ $emoji }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.namespace }}) — {{ if eq $status "resolved" }}resolved{{ else }}firing{{ end }}
+{{ $emoji }} {{ .CommonLabels.alertname }} ({{ .CommonLabels.namespace }}) — {{ if eq $status "resolved" }}resolved{{ else }}firing{{ end }}
 {{- end -}}
 
 {{- define "email.html" -}}
