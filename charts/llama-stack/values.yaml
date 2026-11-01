@@ -366,6 +366,15 @@ qdrant:
     size: 10Gi
   service:
     type: ClusterIP
+  # fix too many open files error
+  args:
+    - |
+      for n in 1048576 262144 65536; do
+        ulimit -Sn "$n" 2>/dev/null && break
+      done
+      [ "$(ulimit -Sn)" -lt 65536 ] 2>/dev/null && ulimit -Sn "$(ulimit -Hn)" 2>/dev/null
+      echo "Qdrant open file limit: soft=$(ulimit -Sn) hard=$(ulimit -Hn)"
+      exec ./config/initialize.sh
   resources:
     limits:
       cpu: 4
