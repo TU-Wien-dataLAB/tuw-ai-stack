@@ -15,7 +15,6 @@ What is being deployed?
 - **llm-d-modelservice** (per model) - vLLM-based model deployment service (helm chart from [https://github.com/TU-Wien-dataLAB/llm-d-modelservice](https://github.com/TU-Wien-dataLAB/llm-d-modelservice))
 - **loki** - log aggregation system with Alloy
 - **mcp-servers** - Model Context Protocol servers for AI/ML workloads
-- **model-pvc** - PersistentVolumeClaim management for LLM model storage with optional download jobs
 - **open-webui** - LLM chat interface
 - **speaches** - speech-to-text service
 
