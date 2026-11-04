@@ -167,14 +167,14 @@ if env | grep -q '^OTEL_'; then
 fi
 
 if [ -n "$RUN_CONFIG_PATH" ] && [ -f "$RUN_CONFIG_PATH" ]; then
-  exec $CMD_PREFIX ogx stack run "$RUN_CONFIG_PATH" "$@"
+  exec $CMD_PREFIX ogx run "$RUN_CONFIG_PATH" "$@"
 fi
 
 if [ -n "$DISTRO_NAME" ]; then
-  exec $CMD_PREFIX ogx stack run "$DISTRO_NAME" "$@"
+  exec $CMD_PREFIX ogx run "$DISTRO_NAME" "$@"
 fi
 
-exec $CMD_PREFIX ogx stack run "$@"
+exec $CMD_PREFIX ogx run "$@"
 EOF
 RUN chmod +x /usr/local/bin/ogx-entrypoint.sh
 
