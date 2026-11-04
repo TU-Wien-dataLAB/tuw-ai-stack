@@ -6,6 +6,7 @@ What is being deployed?
 - **aqueduct** - AI gateway (helm chart can be found at [https://github.com/TU-Wien-dataLAB/aqueduct/tree/main/charts/aqueduct](https://github.com/TU-Wien-dataLAB/aqueduct/tree/main/charts/aqueduct))
 - **vllm-production-stack** - inference engine with model router (helm chart found at [https://github.com/vllm-project/production-stack](https://github.com/vllm-project/production-stack))
 - **cert-issuer** - certificate issuer for TLS certificates
+- **docling-serve** - document conversion API (file processor for OGX)
 - **gateway-api-crds** - Gateway API Custom Resource Definitions (helm chart from [https://github.com/kubernetes-sigs/gateway-api.git](https://github.com/kubernetes-sigs/gateway-api.git))
 - **inference-extension-crds** - Inference Extension CRDs for intelligent LLM routing (helm chart from [https://github.com/kubernetes-sigs/gateway-api-inference-extension.git](https://github.com/kubernetes-sigs/gateway-api-inference-extension.git))
 - **inferencepool** (per model) - Inference scheduling extension with intelligent request routing (helm chart from [registry.k8s.io/gateway-api-inference-extension/charts](https://github.com/kubernetes-sigs/gateway-api-inference-extension))

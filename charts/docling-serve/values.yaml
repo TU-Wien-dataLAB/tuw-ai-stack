@@ -1,0 +1,45 @@
+nameOverride: ""
+fullnameOverride: ""
+
+# >1 needs a shared job queue (RQ engine), async jobs are kept per pod
+replicaCount: 1
+
+image:
+  repository: quay.io/docling-project/docling-serve-cpu
+  tag: ""  # defaults to appVersion
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5001
+
+env: []
+
+resources: {}
+
+startupProbe:
+  httpGet:
+    path: /ready
+    port: http
+  periodSeconds: 10
+  failureThreshold: 60
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: http
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
