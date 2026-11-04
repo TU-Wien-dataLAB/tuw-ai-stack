@@ -32,6 +32,7 @@ from ogx.providers.inline.vector_io.sqlite_vec.config import (
     SQLiteVectorIOConfig,
 )
 from ogx.providers.registry.inference import available_providers
+from ogx.providers.remote.file_processor.docling_serve.config import DoclingServeFileProcessorConfig
 from ogx.providers.remote.tool_runtime.brave_search.config import BraveSearchToolConfig
 from ogx.providers.remote.tool_runtime.tavily_search.config import TavilySearchToolConfig
 from ogx.providers.remote.vector_io.chroma.config import ChromaVectorIOConfig
@@ -143,7 +144,10 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
             BuildProvider(provider_type="remote::infinispan"),
         ],
         "files": [BuildProvider(provider_type="inline::localfs")],
-        "file_processors": [BuildProvider(provider_type="inline::auto")],
+        "file_processors": [
+            BuildProvider(provider_type="inline::auto"),
+            BuildProvider(provider_type="remote::docling-serve"),
+        ],
         "interactions": [BuildProvider(provider_type="inline::builtin")],
         "messages": [BuildProvider(provider_type="inline::builtin")],
         "responses": [BuildProvider(provider_type="inline::builtin")],
@@ -264,6 +268,12 @@ def get_distribution_template(name: str = "starter") -> DistributionTemplate:
         "responses": [responses_provider],
         "files": [files_provider],
         "file_processors": [
+            # auto stays last: it is the processor vector stores use
+            Provider(
+                provider_id="${env.DOCLING_SERVE_URL:+docling-serve}",
+                provider_type="remote::docling-serve",
+                config=DoclingServeFileProcessorConfig.sample_run_config(),
+            ),
             Provider(
                 provider_id="auto",
                 provider_type="inline::auto",
