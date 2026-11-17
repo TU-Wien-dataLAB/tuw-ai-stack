@@ -1393,7 +1393,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Redis Dashboard for Prometheus Redis Exporter (helm stable/redis-ha)",
+  "title": "Redis / Valkey",
   "uid": "xDLNRKUWz",
   "version": 4
 }
