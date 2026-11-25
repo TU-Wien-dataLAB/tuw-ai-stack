@@ -2,6 +2,14 @@
 sso:
   vaultSecretKey: open-webui-sso-client-secret
 
+# Stable WEBUI_SECRET_KEY generated once by an ESO Password generator.
+# When enabled, reference it from open-webui.extraEnvVars:
+#   - name: WEBUI_SECRET_KEY
+#     valueFrom: {secretKeyRef: {name: open-webui-secret-key, key: WEBUI_SECRET_KEY}}
+webuiSecretKey:
+  generate: false
+  secretName: open-webui-secret-key
+
 # CloudNativePG cluster for PostgreSQL database
 cnpg:
   enabled: false
