@@ -1,0 +1,1840 @@
+{
+  "uid": "aqueduct-metrics",
+  "title": "Aqueduct",
+  "description": "Aqueduct gateway: traffic, concurrent requests per model, database connections and health.",
+  "tags": [
+    "aqueduct"
+  ],
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": {
+          "query": "label_values(aqueduct_build_info, namespace)",
+          "refId": "ns"
+        },
+        "definition": "label_values(aqueduct_build_info, namespace)",
+        "current": {
+          "text": "aqueduct",
+          "value": "aqueduct"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": false,
+        "includeAll": false,
+        "options": []
+      },
+      {
+        "name": "model",
+        "label": "Model",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": {
+          "query": "label_values(aqueduct_model_concurrency_limit{namespace=\"$namespace\"}, model)",
+          "refId": "model"
+        },
+        "definition": "label_values(aqueduct_model_concurrency_limit{namespace=\"$namespace\"}, model)",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Overview",
+      "id": 1,
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Aqueduct version",
+      "description": "Version running on the web pods. Shows more than one during an update.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (version) (aqueduct_build_info{namespace=\"$namespace\"})",
+          "legendFormat": "{{version}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Web pods running",
+      "description": "Web pods that report metrics. Fewer than expected means pods are down or restarting.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(aqueduct_build_info{namespace=\"$namespace\"})",
+          "legendFormat": "__auto",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 3,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Database",
+      "description": "Whether the database answers. DOWN if any web pod cannot reach it.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "min(aqueduct_db_up{namespace=\"$namespace\"})",
+          "legendFormat": "__auto",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 4,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Redis",
+      "description": "Whether Redis answers. Aqueduct uses it to enforce per-model request limits. DOWN if any web pod cannot reach it.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "min(aqueduct_redis_up{namespace=\"$namespace\"})",
+          "legendFormat": "__auto",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 5,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Requests in the last minute",
+      "description": "All requests to the selected models in the last 60 seconds.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\"}))",
+          "legendFormat": "__auto",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 6,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Requests in progress",
+      "description": "Requests currently being answered by the selected models.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(max by (model) (aqueduct_inflight_requests{namespace=\"$namespace\", model=~\"$model\"}))",
+          "legendFormat": "__auto",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "showPercentChange": false
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 7,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Concurrent requests",
+      "id": 8,
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests in progress vs. limit, by model",
+      "description": "Requests each model is answering right now. The dashed line is how many it may answer at once; further requests have to wait.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (model) (aqueduct_inflight_requests{namespace=\"$namespace\", model=~\"$model\"})",
+          "legendFormat": "{{model}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (model) (aqueduct_model_concurrency_limit{namespace=\"$namespace\", model=~\"$model\"})",
+          "legendFormat": "{{model}} limit",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    10
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 6
+      },
+      "id": 9,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "Capacity in use, by model",
+      "description": "Requests in progress as a share of each model's limit, right now. Near 100% means new requests have to wait.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max by (model) (aqueduct_inflight_requests{namespace=\"$namespace\", model=~\"$model\"}) / (max by (model) (aqueduct_model_concurrency_limit{namespace=\"$namespace\", model=~\"$model\"}) > 0)",
+          "legendFormat": "{{model}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.7
+              },
+              {
+                "color": "red",
+                "value": 0.9
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "valueMode": "color",
+        "namePlacement": "auto",
+        "sizing": "auto",
+        "minVizHeight": 16,
+        "maxVizHeight": 300
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 10,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Traffic",
+      "id": 11,
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per minute, by model (stacked)",
+      "description": "Requests per model in the last 60 seconds. Stacked: each band is one model, the top edge is the total.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\"}))",
+          "legendFormat": "{{model}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 75,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 12,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per minute, by status (stacked)",
+      "description": "Requests in the last 60 seconds by HTTP status. 2xx succeeded, 429 hit a rate limit, 5xx failed, 'in progress' has no answer yet. Stacked: the top edge is the total.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (status) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\"}))",
+          "legendFormat": "{{status}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 75,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^2.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "429"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^5.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pending"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "in progress"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 13,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Error rate, by model",
+      "description": "Share of completed requests in the last 60 seconds that did not succeed, including requests rejected by a rate limit (429).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "(sum by (model) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\", status!~\"2..|pending\"})) or 0 * sum by (model) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\", status!=\"pending\"}))) / (sum by (model) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\", status!=\"pending\"})) > 0)",
+          "legendFormat": "{{model}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
+      "id": 14,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Errors per minute, by model and status (stacked)",
+      "description": "Completed requests in the last 60 seconds that did not succeed. Stacked: the top edge is the total.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model, status) (max by (model, status) (aqueduct_requests_last_minute{namespace=\"$namespace\", model=~\"$model\", status!~\"2..|pending\"}))",
+          "legendFormat": "{{model}} {{status}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 75,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 15,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Database connections (per web pod)",
+      "id": 16,
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Database connections in use",
+      "description": "Per web pod: connections in use (solid), connections open (dotted) and the most a pod may open (red dashed).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_db_pool_size{namespace=\"$namespace\"} - aqueduct_db_pool_available{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}} in use",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_db_pool_size{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}} open",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "max(aqueduct_db_pool_max{namespace=\"$namespace\"})",
+          "legendFormat": "max",
+          "refId": "C",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dot"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    10
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "id": 17,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests waiting for a database connection",
+      "description": "Requests queued because all of a pod's database connections are busy. Staying above 0 means the pod needs more connections.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_db_pool_requests_waiting{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "id": 18,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Average wait for a database connection",
+      "description": "How long a request waits, on average, before it gets a database connection.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(aqueduct_db_pool_wait_seconds_total{namespace=\"$namespace\"}[$__rate_interval]) / (rate(aqueduct_db_pool_requests_total{namespace=\"$namespace\"}[$__rate_interval]) > 0)",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 40
+      },
+      "id": 19,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Database connections requested per second",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(aqueduct_db_pool_requests_total{namespace=\"$namespace\"}[$__rate_interval])",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 40
+      },
+      "id": 20,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Database connection errors",
+      "description": "Requests that got no database connection (for example after waiting too long), and connections found broken.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "increase(aqueduct_db_pool_requests_errors_total{namespace=\"$namespace\"}[$__rate_interval])",
+          "legendFormat": "{{pod}} errors",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "increase(aqueduct_db_pool_connections_lost_total{namespace=\"$namespace\"}[$__rate_interval])",
+          "legendFormat": "{{pod}} lost",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 40
+      },
+      "id": 21,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Health and resources (per web pod)",
+      "id": 22,
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      }
+    },
+    {
+      "type": "state-timeline",
+      "title": "Database and Redis availability",
+      "description": "Green while each web pod can reach the database and Redis, red while it cannot.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_db_up{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}} db",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_redis_up{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}} redis",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "mergeValues": true,
+        "rowHeight": 0.8,
+        "alignValue": "left",
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 49
+      },
+      "id": 23,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Time to collect metrics",
+      "description": "How long a pod takes to gather these metrics. A rise usually means the database or Redis is slow.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "aqueduct_scrape_duration_seconds{namespace=\"$namespace\"}",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 49
+      },
+      "id": 24,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU usage",
+      "description": "CPU used by each web pod's Aqueduct process (100% = one core).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(process_cpu_seconds_total{namespace=\"$namespace\"}[$__rate_interval]) * on (namespace, pod) group_left () max by (namespace, pod) (aqueduct_build_info{namespace=\"$namespace\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 57
+      },
+      "id": 25,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory usage",
+      "description": "Memory used by each web pod's Aqueduct process.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "process_resident_memory_bytes{namespace=\"$namespace\"} * on (namespace, pod) group_left () max by (namespace, pod) (aqueduct_build_info{namespace=\"$namespace\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 57
+      },
+      "id": 26,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Open files and connections",
+      "description": "Files and network connections each web pod's Aqueduct process has open. A steady climb can mean a leak.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "process_open_fds{namespace=\"$namespace\"} * on (namespace, pod) group_left () max by (namespace, pod) (aqueduct_build_info{namespace=\"$namespace\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisSoftMin": 0
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 57
+      },
+      "id": 27,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      }
+    }
+  ]
+}
